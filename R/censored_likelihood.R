@@ -1,0 +1,234 @@
+#' Censored log-likelihood function
+#'
+#' Compute the censored log-likelihood function for Brown--Resnick model with peaks-over-threhold
+#'
+#' The function computes the censored log-likelihood function based on the representation
+#' developped by Waddsworth et al. (2013) and Engelelke et al. (2015). Margins must have been
+#' standardized, for instance to unit Frechet.
+#'
+#' @param obs A list of observations vectors for which at least one component exceeds a high threshold.
+#' @param loc A matrix of coordinates as given by \code{expand.grid()}.
+#' @param vario A semi-variogram function taking a vector of coordinates as input.
+#' @param u The vector of thresholds for censoring components.
+#' @param p The number of samples used in the quasi-Monte carlo. Must be a prime number.
+#' @param vec Generating vector for the quasi-Monte Carlo procedure corresponding to \code{p} and the number of dimensions.
+#' Can be computed using \code{generatingVector}.
+#' @param nCores The number of cores used for the computation
+#' @param cl A cluster instance as created by \code{makeCluster} of the \code{parallel} package.
+#' @return Value of the censored log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+#' @examples
+#' #Define variogram function
+#' vario <- function(h){
+#'    1 / 2 * norm(h,type = "2")^1.5
+#' }
+#'
+#' #Define locations
+#' loc <- expand.grid(1:4, 1:4)
+#'
+#' #Simulate data
+#' obs <- simulPareto(1000, loc, vario)
+#'
+#' #Compute cost function series
+#' maxima <- sapply(obs, max)
+#' thres <- quantile(maxima, 0.9)
+#'
+#' #Select exceedances
+#' exceedances <- obs[maxima > thres]
+#'
+#' #Compute generating vector
+#' p <- 499
+#' vec <- genVecQMC(p, nrow(loc))
+#'
+#' #Compute log-likelihood function
+#' censoredLikelihood(exceedances, loc, vario, rep(thres, nrow(loc)), p, vec)
+#' @export
+#' @useDynLib mvPot mvtNormCpp
+#' @references Wadsworth, J.L. and Tawn, J.A. (2013). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
+#'             Asadi, P., Davison A. C. and Engelke, S. (2016). Extremes on River Networks. Annals of Applied Statistics, to appear.
+
+censoredLikelihood = function(obs,
+                              loc,
+                              vario,
+                              u,
+                              p = 499 ,
+                              vec = c(1, 209, 109, 191, 67, 51, 120, 93, 87, 157, 178, 45, 137, 84, 198,
+                                      61, 232, 113, 182, 150, 57, 169, 141, 79, 132, 163, 38, 85, 131, 106,
+                                      96, 165, 233, 179, 32, 228, 73, 233, 96, 131, 147, 32, 179, 165, 179,
+                                      228, 32, 147, 165, 106, 228, 32, 179, 131, 32, 131, 228, 179, 106,
+                                      165, 147, 179, 106, 147, 228, 165, 165, 179, 147, 228, 106, 106, 32,
+                                      228, 147, 179, 32, 228, 106, 147, 32, 147, 228, 106, 179, 106, 179,
+                                      228, 32, 147, 179, 32, 228, 106, 147, 147, 106, 179, 228, 32, 106,
+                                      228, 147, 179, 32, 228, 147, 32, 179, 106, 32, 106, 179, 147, 147,
+                                      179, 228, 106, 32, 106, 228, 179, 32, 147, 228, 179, 106, 32, 147,
+                                      228, 106, 179, 32, 106, 147, 228, 179, 32, 228, 106, 179, 147, 32,
+                                      147, 179, 106, 228, 106, 179, 147, 228, 32, 228, 179, 147, 106, 147,
+                                      32, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179, 179,
+                                      179, 179, 179) / 499,
+                              nCores = 1,
+                              cl = NULL){
+
+  if(class(obs) != "list" || length(obs) < 1 || class(obs[[1]]) != "numeric"){
+    stop('obs must be a list of vectors')
+  }
+  if(class(loc) != "data.frame") {
+    stop('loc must be the data frame of coordinates as generated by expand.grid()')
+  }
+
+  n <- length(obs)
+  dim <- nrow(loc)
+
+  if(dim != length(obs[[1]])){
+    stop('The size of the vectors of observations does not match grid size.')
+  }
+  if(!is.numeric(u)  || length(u) != dim) {
+    stop('u must be a vector with a length equal to the number of location.')
+  }
+  if(!is.numeric(p)) {
+    stop('p must be a prime number.')
+  }
+  if(!is.numeric(vec)  || length(vec) < dim) {
+    stop('vec must be generating vector with length at least equal to the number of locations.')
+  }
+  if(!is.numeric(nCores) || nCores < 1) {
+    stop('nCores must a positive number of cores to use for parallel computing.')
+  }
+  if(nCores > 1 && length(grep("cluster",class(cl))) > 0) {
+    stop('For parallel computation, cl must an cluster created by makeCluster of the package parallel.')
+  }
+
+
+
+  gamma <- tryCatch({
+    dists <- lapply(1:ncol(loc), function(i) {
+      outer(loc[,i],loc[,i], "-")
+    })
+
+    computeVarMat <- sapply(1:length(dists[[1]]), function(i){
+      h <- rep(0,ncol(loc))
+      for(j in 1:ncol(loc)){
+        h[j] = dists[[j]][i]
+      }
+      vario(h)
+    })
+    matrix(computeVarMat, dim, dim)
+  }, warning = function(war) {
+    war
+  }, error = function(err) {
+    stop('The semi-variogram provided is not valide for the provided locations.')
+  })
+
+  identityVector = matrix(1,(dim-1),1)
+
+  mleEst = function(i){
+    #print(i)
+    if(i < (dim +1)) {
+      #Computation for the exponent measure
+      thres = rep(1,dim)
+      upperBound = sqrt(gamma[-i,i]/2) - log(thres[i]/thres[-i])/sqrt(2*gamma[-i,i])
+      cov = (gamma[-i,i]%*%t(identityVector) + t(gamma[i,-i]%*%t(identityVector)) - gamma[-i,-i]) / (2*sqrt(gamma[-i,i]%*%t(identityVector)*t(gamma[i,-i]%*%t(identityVector))))
+
+      tmp <-.C("mvtNormCpp",
+               as.integer(p),
+               as.integer(length(upperBound)),
+               as.double(cov),
+               as.double(upperBound),
+               as.double(vec[1:length(upperBound)]),
+               est = double(length=1),
+               err = double(length=1)
+      )
+      tmp$est
+
+    } else {
+      j = i - dim
+
+      observation <- .subset2(obs,j) / u
+
+      #Computation for the density function
+      posUnder <- which(observation < 1)
+      posAbove <- which(observation >= 1)
+
+      k <- dim - length(posUnder)
+
+      #Multivariate log normal density for uncensored
+      identityVector = matrix(1,(dim-1),1)
+      sigma = ( outer(gamma[-posAbove[1],posAbove[1]],gamma[posAbove[1],-posAbove[1]], "+") - gamma[-posAbove[1],-posAbove[1]])
+
+      #Shift indexes to match the new covariance matrix indexes
+      posAboveShifted = posAbove[-1] - 1
+      posUnderShifted = posUnder
+      posUnderShifted[posUnder > posAbove[1]] = posUnder[posUnder > posAbove[1]] - 1
+
+      if(k > 1){
+        invCovMat = MASS::ginv(sigma[posAboveShifted,posAboveShifted, drop = F])
+        logdetA = determinant(sigma[posAboveShifted,posAboveShifted, drop = F], logarithm = TRUE)$modulus
+        omega <- log(observation[posAbove][-1]/observation[posAbove][1]) + gamma[posAbove[-1],posAbove[1]]
+
+        mle1 <- 1 / 2 * (logdetA + log((2 * pi)^(k-1)) + t(omega) %*% invCovMat %*% omega)  + log(obs[[j]][posAbove][1]) + sum(log(obs[[j]][posAbove]))
+      } else {
+        #One exceedance only -> parameters have no impact
+        mle1 <- 2*log(obs[[j]][posAbove][1])
+      }
+
+      if(k < dim){
+        if(k > 1) {
+          muC = ( - log(observation[posAbove][1]) + gamma[posAbove[1],posUnder]) - sigma[posUnderShifted, posAboveShifted, drop = F] %*% invCovMat %*% omega
+          sigmaC = sigma[posUnderShifted,posUnderShifted, drop = F] - sigma[posUnderShifted, posAboveShifted, drop = F] %*% invCovMat %*% sigma[posAboveShifted, posUnderShifted, drop = F]
+        } else {
+          muC = ( - log(observation[posAbove][1]) + gamma[posAbove[1],posUnder, drop = F])
+          sigmaC = sigma
+        }
+        if(k == (dim-1)){
+          tmp = stats::pnorm(as.vector(muC), sd = sigmaC)
+          mle2 = max(1e-323, tmp)
+          mle2 = - log(mle2)
+        } else {
+          tmp <- .C("mvtNormCpp",
+                    as.integer(p),
+                    as.integer(length(muC)),
+                    as.double(sigmaC),
+                    as.double(as.vector(muC)),
+                    as.double(vec[1:length(muC)]),
+                    est = double(length=1),
+                    err = double(length=1)
+          )
+          if(tmp$est == 0){
+            mle2 = - log(.Machine$double.xmin)
+          }else{
+            mle2 = - log(tmp$est)
+          }
+        }
+      } else {
+        mle2 = 0
+      }
+      mle1 + mle2
+    }
+  }
+
+  if(nCores > 1){
+    # ------------ Parallel computation of the mle -------------------
+    blockedMLE = function(i){
+      blockStart <- (i-1) * blockSize + 1
+      if(blockStart < (n + dim + 1)){
+        blockEnd  <- min( i * blockSize, (n + dim))
+        lapply(blockStart:blockEnd, mleEst)
+      }
+    }
+
+    blockSize <- floor((dim + n) / nCores) + 1
+    prod <- parallel::parLapply(cl,1:(nCores), blockedMLE)
+  } else {
+    prod <- lapply(1:(dim + n), mleEst)
+  }
+
+  res <- (n) * log(sum(unlist(prod)[1:dim])) + sum(unlist(prod)[(dim+1):(n +dim)])
+  return(res)
+}
