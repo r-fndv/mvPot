@@ -8,30 +8,30 @@ scoreEstimation(obs, loc, vario, weigthFun, dWeigthFun, nCores = 1,
   cl = NULL, ...)
 }
 \arguments{
-\item{obs}{A list of observations vectors exceeding an R-threshold, see Fondeville and Davison (2016) for more details.}
+\item{obs}{List of vectors exceeding an R-threshold, see Fondeville and Davison (2016) for more details.}
 
-\item{loc}{A matrix of coordinates as given by \code{expand.grid()}.}
+\item{loc}{Matrix of coordinates as given by \code{expand.grid()}.}
 
-\item{vario}{A semi-variogram function taking a vector of coordinates as input.}
+\item{vario}{Semi-variogram function taking a vector of coordinates as input.}
 
-\item{weigthFun}{A function of weigths.}
+\item{weigthFun}{Function of weigths.}
 
-\item{dWeigthFun}{The partial derivative function of \code{weigthFun}.}
+\item{dWeigthFun}{Partial derivative function of \code{weigthFun}.}
 
 \item{nCores}{Number of cores used for the computation}
 
-\item{cl}{A cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
+\item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
 
 \item{...}{Parameters for \code{weigthFun} and \code{dWeigthFun}.}
 }
 \value{
-Value of the gradient score function for the set of observations \code{obs} and semi-variogram \code{vario}.
+Evaluation of the gradient score function for the set of observations \code{obs} and semi-variogram \code{vario}.
 }
 \description{
-Compute the gradient score function for Brown--Resnick model with peaks-over-threhold
+Compute the peaks-over-threhold gradient score function for the Brown--Resnick model.
 }
 \details{
-The function compute the gradient score based on the representation developped by Wadsworth et al. (2013).
+The function computes the gradient score based on the representation developped by Wadsworth et al. (2013).
 Margins must have been standardized. The weighting function must differentiable and verify some properties
 for consitency, see Fondeville and Davison (2016) for more details.
 }
@@ -47,7 +47,7 @@ loc <- expand.grid(1:4, 1:4)
 #Simulate data
 obs <- simulPareto(1000, loc, vario)
 
-#Compute cost function series
+#Evaluate risk functional
 sums <- sapply(obs, sum)
 
 #Define weighting function
@@ -64,7 +64,7 @@ dWeigthFun <- function(x, u){
 threshold <- quantile(sums, 0.9)
 exceedances <- obs[sums > threshold]
 
-#Compute gradient score function
+#Evaluate gradient score function
 scoreEstimation(exceedances, loc, vario, weigthFun, dWeigthFun, u = threshold)
 }
 \references{

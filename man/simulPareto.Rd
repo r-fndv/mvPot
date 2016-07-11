@@ -7,23 +7,24 @@
 simulPareto(n, loc, vario, nCores = 1, cl = NULL)
 }
 \arguments{
-\item{n}{The number of replicates desired}
+\item{n}{Number of replicates desired.}
 
-\item{loc}{A matrix of coordinates as given by \code{expand.grid()}.}
+\item{loc}{Matrix of coordinates as given by \code{expand.grid()}.}
 
-\item{vario}{A semi-variogram function.}
+\item{vario}{Semi-variogram function.}
 
-\item{nCores}{The number of cores used for the computation}
+\item{nCores}{Number of cores used for the computation}
 
-\item{cl}{A cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
-the random number generator has been properly initialized with \code{clusterSetRNGStream()}.}
+\item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
+the random number generator has been properly initialized with
+\code{clusterSetRNGStream()}.}
 }
 \value{
-A list of \code{n} random vectors drawn from a mutlivariate Pareto distribution with semi-variogram \code{vario}.
+List of \code{n} random vectors drawn from a mutlivariate Pareto distribution with semi-variogram \code{vario}.
 }
 \description{
-\code{simulPareto} provides \code{n} replicates of a multivariate Pareto distribution
-for the semi-variogram \code{vario}.
+\code{simulPareto} provides \code{n} replicates of the multivariate Pareto distribution
+associated to log-Gaussian random function with semi-variogram \code{vario}.
 }
 \details{
 The algorithm used here is based on the spectral representation of the Brown--Resnick

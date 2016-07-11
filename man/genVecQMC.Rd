@@ -7,9 +7,9 @@
 genVecQMC(p, d, bt = rep(1, d), gm = c(1, (4/5)^(0:(d - 2))))
 }
 \arguments{
-\item{p}{A prime number corresponding to the number of samples to use.}
+\item{p}{Prime number corresponding to the number of samples to use in the quasi-Monte Carlo procedure.}
 
-\item{d}{Dimension of the multivariate integral to estiamte.}
+\item{d}{Dimension of the multivariate integral to estimate.}
 
 \item{bt}{Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.}
 
@@ -19,7 +19,7 @@ genVecQMC(p, d, bt = rep(1, d), gm = c(1, (4/5)^(0:(d - 2))))
 A \code{d}-dimensional generating vector for lattice rules with \code{p} samples.
 }
 \description{
-Compute a generating vector for quasi-Monte Carlo estimation
+Compute an efficient generating vector for quasi-Monte Carlo estimation.
 }
 \details{
 The function computes a generating vector for efficient multivariate integral estimation

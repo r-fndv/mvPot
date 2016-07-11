@@ -7,7 +7,7 @@ Multivariate Peaks-over-Threshold Modelling for Extreme Events Analysis
 }
 \description{
 The mvPot package provides functions to perform high-dimensional peaks-over-threshold inference
-of spatial processes such as the Browm--Resnick model. Parallel implementation for censored likelihood
+of spatial processes such as the Browm--Resnick. Parallel implementation for censored likelihood
 allows up to 500 locations, whereas the gradient score can handle thousands of locations. The package also
 includes simulations algorithms for the Brown-Resnick max-stable process as well as its associated Pareto process.
 }
@@ -19,13 +19,13 @@ Version: \tab 0.1.0\cr
 Date: \tab 2016-05-26\cr
 License: \tab GPL2\cr
 }
-The mvPot package provides functions to perform high-dimensional peaks-over-threshold inference of spatial processes such as the Browm--Resnick model.
+The mvPot package provides functions to perform high-dimensional peaks-over-threshold inference of spatial processes such as the Browm--Resnick.
 
 \code{spectralLikelihood} relies on the spectral likelihood as developped by Engelke et al. (2015). This methods is fast to compute, however it is not robust with regard to non-extreme components.
 
-\code{censoredLikelihood} (Wadsworth and Tawn, 2013) is a likelihood function for exceedances with at least one component exceeding a threshold and where low components of the vectors of observations are censored. This approach is robust and performs best but requires heavy computions. The implementation in this package can handle up to 100 locations for serial computation and up to 500 when parallelized.
+\code{censoredLikelihood} (Wadsworth and Tawn, 2013) is a likelihood function for exceedances with at least one component exceeding a threshold and where low components, i.e., components under their threshold,. This approach is robust and performs best but requires heavy computions. The implementation in this package makes use of quasi-Monte Carlo estimation and thus can handle 100 locations in a reasonable time and up to 500 when parallelized.
 
-\code{scoreEstimation} is a faster alternative to the \code{censoredLikelihood}, which shows more robustness than \code{spectralLikelihood}. This method can also be used with any kind of differentiable risk functional (Fondeville and Davison, 2016). Here the algorithm is limited only by matrix inversion and thousands of locations can then be used.
+\code{scoreEstimation} is a faster alternative to the \code{censoredLikelihood}, which is more robust than \code{spectralLikelihood}. This method can also be used with any kind of differentiable risk functional (Fondeville and Davison, 2016). Here the algorithm is limited only by matrix inversion and thus thousands of locations can be used.
 
 \code{simulBrownResnick} is an exact algorithm for simulation of Brown-Resnick max-stable processes as described in Dombry et al. (2015).
 
@@ -44,7 +44,7 @@ Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-R
 
 Wadsworth, J.L. and Tawn, J.A. (2013). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
 
-Dombry, C., Engelke S., and Oesting, M. (2015). Exact Simulation of Max-stable processes. Biometrika, To appear.
+Dombry, C., Engelke S., and Oesting, M. (2016). Exact Simulation of Max-stable processes. Biometrika, To appear.
 
 Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
 
@@ -53,19 +53,19 @@ Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/s
 
 \keyword{ mvPot, multivariate, spatial }
 \examples{
-#Define variogram function
+#Define semi-variogram function
 vario <- function(h, alpha = 1.5){
     norm(h,type = "2")^alpha
- }
+}
 
- #Define locations
- loc <- expand.grid(1:4, 1:4)
+#Define locations
+loc <- expand.grid(1:4, 1:4)
 
- #Simulate data
- obs <- simulPareto(1000, loc, vario)
+#Simulate data
+obs <- simulPareto(1000, loc, vario)
 
-#Compute exceedances series
- sums <- sapply(obs, sum)
+#Evaluate risk functional
+sums <- sapply(obs, sum)
 
 #Define weighting function
 weigthFun <- function(x, u){
@@ -78,23 +78,23 @@ dWeigthFun <- function(x, u){
 }
 
 
- #Select exceedances
- threshold <- quantile(sums, 0.9)
- exceedances <- obs[sums > threshold]
+#Select exceedances
+threshold <- quantile(sums, 0.9)
+exceedances <- obs[sums > threshold]
 
 #Define objective function
 objectiveFunction = function(parameter, exceedances, loc, vario, weigthFun, dWeigthFun, threshold){
 
-  #Define the variogram
-  varioModel <- function(h){
-   vario(h, parameter[1])
-  }
+ #Define semi-variogram for the corresponding parameters
+ varioModel <- function(h){
+  vario(h, parameter[1])
+ }
 
-  #Compute score
-  scoreEstimation(exceedances, loc, varioModel, weigthFun, dWeigthFun, u = threshold)
+ #Compute score
+ scoreEstimation(exceedances, loc, varioModel, weigthFun, dWeigthFun, u = threshold)
 }
 
-#Estimate the parameter
+#Estimate the parameter by optimization of the objective function
 est <- optim(par = c(1.5),
              fn = objectiveFunction,
              exceedances = exceedances,
@@ -107,6 +107,4 @@ est <- optim(par = c(1.5),
              lower = c(0.01),
              upper = c(1.99),
              method = "L-BFGS-B")
-
-
 }

@@ -2,38 +2,39 @@
 % Please edit documentation in R/rBrownResnick.R
 \name{simulBrownResnick}
 \alias{simulBrownResnick}
-\title{Simulation of Brown--Resncik random vectors}
+\title{Simulation of Brown--Resnick random vectors}
 \usage{
 simulBrownResnick(n, loc, vario, nCores = 1, cl = NULL)
 }
 \arguments{
-\item{n}{The number of replicates desired.}
+\item{n}{Number of replicates desired.}
 
-\item{loc}{A matrix of coordinates as given by \code{expand.grid()}.}
+\item{loc}{Matrix of coordinates as given by \code{expand.grid()}.}
 
-\item{vario}{A semi-variogram function.}
+\item{vario}{Semi-variogram function.}
 
-\item{nCores}{The number of cores needed for the computation}
+\item{nCores}{Number of cores needed for the computation}
 
-\item{cl}{A cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
-the random number generator has been properly initialized with \code{clusterSetRNGStream()}.}
+\item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
+the random number generator has been properly initialized with
+\code{clusterSetRNGStream()}.}
 }
 \value{
-A list of \code{n} random vectors drawn from a max-stable Brown--Resnick process
+List of \code{n} random vectors drawn from a max-stable Brown--Resnick process
  with semi-variogram \code{vario} at location \code{loc}.
 }
 \description{
-\code{simulBrownResnick} provides \code{n} replicates of a Brown--Resnick max-stable process at locations \code{loc}
-and for the semi-variogram \code{vario}.
+\code{simulBrownResnick} provides \code{n} replicates of a Brown--Resnick max-stable process with semi-variogram \code{vario}
+at locations \code{loc}.
 }
 \details{
 The algorithm used here is based on the spectral representation of the Brown--Resnick
 model as described in Dombry et al. (2015). It provides \code{n} exact simulations
-on the unit Frechet scale and requires in average the simulation of a number Pareto processes
-equal to the number of dimension for each max-stable vector.
+on the unit Frechet scale and requires, in average, for each max-stable vector, the simulation of d Pareto processes,
+where d is the number of locations.
 }
 \examples{
-#Define variogram function
+#Define semi-variogram function
 vario <- function(h){
    1 / 2 * norm(h,type = "2")^1.5
 }

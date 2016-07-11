@@ -2,29 +2,29 @@
 % Please edit documentation in R/mvNormQMC.R
 \name{mvtNormQuasiMonteCarlo}
 \alias{mvtNormQuasiMonteCarlo}
-\title{Multivariate Normal Distribution Function}
+\title{Multivariate normal distribution function}
 \usage{
 mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec)
 }
 \arguments{
-\item{p}{The number of samples used in the quasi-Monte carlo. Must be a prime number.}
+\item{p}{Number of samples used for quasi-Monte carlo estimation. Must be a prime number.}
 
 \item{upperBound}{Vector of probabilities, i.e., the upper bound of the integral.}
 
-\item{cov}{The covariance matrix of the multivariate normal distribution. Must be semi-positive definite.
-WARING: for performance in high-dimensions, no check is performed so it is the user responsability to ensure
+\item{cov}{Covariance matrix of the multivariate normal distribution. Must be semi-positive definite.
+WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsability to ensure
 that this property is verified.}
 
-\item{genVec}{Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{generatingVector}.}
+\item{genVec}{Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.}
 }
 \value{
 An estimate of the distribution function along with empirical Monte Carlo error.
 }
 \description{
-Estimate the multivariate distribution function with quasi-Monte Carlo method.
+Estimate the multivariate distribution function with quasi-Monte Carlo estimation.
 }
 \details{
-The function uses quasi-Monte Carlo methods based on randomly shifted
+The function uses a quasi-Monte Carlo procedure based on randomly shifted
 lattice rules to estimate the distribution function a multivariate normal distribution
 as described in Genz, A. and Bretz, F.(2009).
 }
@@ -50,7 +50,7 @@ variogramMatrix[-ref,-ref])
 p <- 499
 vec <- genVecQMC(p, (nrow(loc) - 1))
 
-#Compute log-likelihood function
+#Estimate the multivariate distribution function
 mvtNormQuasiMonteCarlo(p, upperBound, cov, vec)
 }
 \references{

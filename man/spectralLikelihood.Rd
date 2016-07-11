@@ -7,18 +7,18 @@
 spectralLikelihood(obs, loc, vario, nCores = 1, cl = NULL)
 }
 \arguments{
-\item{obs}{A list of observations vectors for which \code{sum(x)} exceeds a high threshold.}
+\item{obs}{List of observations vectors for which \code{sum(x)} exceeds a high threshold.}
 
-\item{loc}{A matrix of coordinates as given by \code{expand.grid()}.}
+\item{loc}{Matrix of coordinates as given by \code{expand.grid()}.}
 
-\item{vario}{A semi-variogram function taking a vector of coordinates as input.}
+\item{vario}{Semi-variogram function taking a vector of coordinates as input.}
 
-\item{nCores}{The number of cores used for the computation}
+\item{nCores}{Number of cores used for the computation}
 
-\item{cl}{A cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
+\item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
 }
 \value{
-Value of the log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+Evaluation of the spectral likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
 }
 \description{
 Compute the spectral log-likelihood function for Brown--Resnick model with peaks-over-threhold
@@ -29,7 +29,7 @@ by Engelelke et al. (2015). This simplified expression is obtained by conditioni
 `\code{sum(x)} exceeds a high threshold \code{u > 1}'. Margins must have been standardized.
 }
 \examples{
-#Define variogram function
+#Define semi-variogram function
 vario <- function(h){
    1 / 2 * norm(h,type = "2")^1.5
 }
@@ -40,13 +40,13 @@ loc <- expand.grid(1:4, 1:4)
 #Simulate data
 obs <- simulPareto(1000, loc, vario)
 
-#Compute cost function series
+#Evaluate risk functional
 sums <- sapply(obs, sum)
 
 #Select exceedances
 exceedances <- obs[sums > quantile(sums, 0.9)]
 
-#Compute log-likelihood function
+#Evaluate the spectral function
 spectralLikelihood(exceedances, loc, vario)
 }
 \references{
