@@ -84,7 +84,7 @@ void pointEstimate(int j,
         y[k-1] = stdnormal_inv(e[k - 1] * x[k - 1]);
         
         //DEAL WITH INFINTE BOUNDS
-        if(std::isinf(y[k-1])) {
+        if(!(R_FINITE(y[k-1]))) {
             if(y[k-1] > 0){
                 value = 1;
             } else {
