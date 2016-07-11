@@ -1,12 +1,12 @@
 #' Generating vectors for lattice rules
 #'
-#' Compute a generating vector for quasi-Monte Carlo estimation
+#' Compute an efficient generating vector for quasi-Monte Carlo estimation.
 #'
 #' The function computes a generating vector for efficient multivariate integral estimation
 #' based on D. Nuyens and R. Cools (2004).
 #'
-#' @param p A prime number corresponding to the number of samples to use.
-#' @param d Dimension of the multivariate integral to estiamte.
+#' @param p Prime number corresponding to the number of samples to use in the quasi-Monte Carlo procedure.
+#' @param d Dimension of the multivariate integral to estimate.
 #' @param bt Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
 #' @param gm Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
 #' @return A \code{d}-dimensional generating vector for lattice rules with \code{p} samples.

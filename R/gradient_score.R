@@ -1,21 +1,21 @@
 #' Gradient score function
 #'
-#' Compute the gradient score function for Brown--Resnick model with peaks-over-threhold
+#' Compute the peaks-over-threhold gradient score function for the Brown--Resnick model.
 #'
-#' The function compute the gradient score based on the representation developped by Wadsworth et al. (2013).
+#' The function computes the gradient score based on the representation developped by Wadsworth et al. (2013).
 #' Margins must have been standardized. The weighting function must differentiable and verify some properties
 #' for consitency, see Fondeville and Davison (2016) for more details.
 #'
 #'
-#' @param obs A list of observations vectors exceeding an R-threshold, see Fondeville and Davison (2016) for more details.
-#' @param loc A matrix of coordinates as given by \code{expand.grid()}.
-#' @param vario A semi-variogram function taking a vector of coordinates as input.
-#' @param weigthFun A function of weigths.
-#' @param dWeigthFun The partial derivative function of \code{weigthFun}.
+#' @param obs List of vectors exceeding an R-threshold, see Fondeville and Davison (2016) for more details.
+#' @param loc Matrix of coordinates as given by \code{expand.grid()}.
+#' @param vario Semi-variogram function taking a vector of coordinates as input.
+#' @param weigthFun Function of weigths.
+#' @param dWeigthFun Partial derivative function of \code{weigthFun}.
 #' @param ... Parameters for \code{weigthFun} and \code{dWeigthFun}.
 #' @param nCores Number of cores used for the computation
-#' @param cl A cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @return Value of the gradient score function for the set of observations \code{obs} and semi-variogram \code{vario}.
+#' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
+#' @return Evaluation of the gradient score function for the set of observations \code{obs} and semi-variogram \code{vario}.
 #' @examples
 #' #Define variogram function
 #' vario <- function(h){
@@ -28,7 +28,7 @@
 #' #Simulate data
 #' obs <- simulPareto(1000, loc, vario)
 #'
-#' #Compute cost function series
+#' #Evaluate risk functional
 #' sums <- sapply(obs, sum)
 #'
 #' #Define weighting function
@@ -45,7 +45,7 @@
 #' threshold <- quantile(sums, 0.9)
 #' exceedances <- obs[sums > threshold]
 #'
-#' #Compute gradient score function
+#' #Evaluate gradient score function
 #' scoreEstimation(exceedances, loc, vario, weigthFun, dWeigthFun, u = threshold)
 #' @export
 #' @references Fondeville, R. de and Davison A. (2016). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.

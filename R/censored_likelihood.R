@@ -1,23 +1,23 @@
 #' Censored log-likelihood function
 #'
-#' Compute the censored log-likelihood function for Brown--Resnick model with peaks-over-threhold
+#' Compute the peaks-over-threhold censored log-likelihood function for the Brown--Resnick model.
 #'
 #' The function computes the censored log-likelihood function based on the representation
 #' developped by Waddsworth et al. (2013) and Engelelke et al. (2015). Margins must have been
 #' standardized, for instance to unit Frechet.
 #'
-#' @param obs A list of observations vectors for which at least one component exceeds a high threshold.
-#' @param loc A matrix of coordinates as given by \code{expand.grid()}.
-#' @param vario A semi-variogram function taking a vector of coordinates as input.
-#' @param u The vector of thresholds for censoring components.
-#' @param p The number of samples used in the quasi-Monte carlo. Must be a prime number.
-#' @param vec Generating vector for the quasi-Monte Carlo procedure corresponding to \code{p} and the number of dimensions.
-#' Can be computed using \code{generatingVector}.
-#' @param nCores The number of cores used for the computation
-#' @param cl A cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @return Value of the censored log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+#' @param obs List of vectors for which at least one component exceeds a high threshold.
+#' @param loc Matrix of coordinates as given by \code{expand.grid()}.
+#' @param vario Semi-variogram function taking a vector of coordinates as input.
+#' @param u Vector of thresholds for censoring components.
+#' @param p Number of samples used for quasi-Monte carlo estimation. Must be a prime number.
+#' @param vec Generating vector for the quasi-Monte Carlo procedure. For a given \code{p} and dimensionality,
+#' can be computed using \code{genVecQMC}.
+#' @param nCores Number of cores used for the computation
+#' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
+#' @return Evaluation of the censored log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
 #' @examples
-#' #Define variogram function
+#' #Define semi-variogram function
 #' vario <- function(h){
 #'    1 / 2 * norm(h,type = "2")^1.5
 #' }
@@ -28,7 +28,7 @@
 #' #Simulate data
 #' obs <- simulPareto(1000, loc, vario)
 #'
-#' #Compute cost function series
+#' #Evaluate risk functional
 #' maxima <- sapply(obs, max)
 #' thres <- quantile(maxima, 0.9)
 #'
@@ -44,6 +44,7 @@
 #' @export
 #' @useDynLib mvPot mvtNormCpp
 #' @references Wadsworth, J.L. and Tawn, J.A. (2013). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
+#'
 #'             Asadi, P., Davison A. C. and Engelke, S. (2016). Extremes on River Networks. Annals of Applied Statistics, to appear.
 
 censoredLikelihood = function(obs,

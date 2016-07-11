@@ -1,19 +1,20 @@
 #' Simulate Pareto random vectors
 #'
-#' \code{simulPareto} provides \code{n} replicates of a multivariate Pareto distribution
-#' for the semi-variogram \code{vario}.
+#' \code{simulPareto} provides \code{n} replicates of the multivariate Pareto distribution
+#' associated to log-Gaussian random function with semi-variogram \code{vario}.
 #'
 #' The algorithm used here is based on the spectral representation of the Brown--Resnick
 #' model as described in Dombry et al. (2015). It provides \code{n} replicates conditioned
 #' that \code{mean(x) > 1} on the unit Frechet scale.
 #'
-#' @param n The number of replicates desired
-#' @param loc A matrix of coordinates as given by \code{expand.grid()}.
-#' @param vario A semi-variogram function.
-#' @param nCores The number of cores used for the computation
-#' @param cl A cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
-#' the random number generator has been properly initialized with \code{clusterSetRNGStream()}.
-#' @return A list of \code{n} random vectors drawn from a mutlivariate Pareto distribution with semi-variogram \code{vario}.
+#' @param n Number of replicates desired.
+#' @param loc Matrix of coordinates as given by \code{expand.grid()}.
+#' @param vario Semi-variogram function.
+#' @param nCores Number of cores used for the computation
+#' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
+#' the random number generator has been properly initialized with
+#' \code{clusterSetRNGStream()}.
+#' @return List of \code{n} random vectors drawn from a mutlivariate Pareto distribution with semi-variogram \code{vario}.
 #' @examples
 #' #Define variogram function
 #' vario <- function(h){

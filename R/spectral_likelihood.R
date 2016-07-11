@@ -6,14 +6,14 @@
 #' by Engelelke et al. (2015). This simplified expression is obtained by conditioning on the event
 #' `\code{sum(x)} exceeds a high threshold \code{u > 1}'. Margins must have been standardized.
 #'
-#' @param obs A list of observations vectors for which \code{sum(x)} exceeds a high threshold.
-#' @param loc A matrix of coordinates as given by \code{expand.grid()}.
-#' @param vario A semi-variogram function taking a vector of coordinates as input.
-#' @param nCores The number of cores used for the computation
-#' @param cl A cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @return Value of the log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+#' @param obs List of observations vectors for which \code{sum(x)} exceeds a high threshold.
+#' @param loc Matrix of coordinates as given by \code{expand.grid()}.
+#' @param vario Semi-variogram function taking a vector of coordinates as input.
+#' @param nCores Number of cores used for the computation
+#' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
+#' @return Evaluation of the spectral likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
 #' @examples
-#' #Define variogram function
+#' #Define semi-variogram function
 #' vario <- function(h){
 #'    1 / 2 * norm(h,type = "2")^1.5
 #' }
@@ -24,13 +24,13 @@
 #' #Simulate data
 #' obs <- simulPareto(1000, loc, vario)
 #'
-#' #Compute cost function series
+#' #Evaluate risk functional
 #' sums <- sapply(obs, sum)
 #'
 #' #Select exceedances
 #' exceedances <- obs[sums > quantile(sums, 0.9)]
 #'
-#' #Compute log-likelihood function
+#' #Evaluate the spectral function
 #' spectralLikelihood(exceedances, loc, vario)
 #' @export
 #' @references Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1):239-265
