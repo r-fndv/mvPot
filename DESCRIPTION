@@ -1,12 +1,12 @@
 Package: mvPot
 Type: Package
 Title: Multivariate Peaks-over-Threshold Modelling for Spatial Extreme Events
-Version: 0.1.0
+Version: 0.1.1
 Date: 2016-06-23
 Authors@R: person("Raphael", "de Fondeville", email = "raphael.de-fondeville@epfl.ch",
   role = c("aut", "cre"))
 Description: Tools for high-dimensional peaks-over-threshold inference and simulation
-  of spatial processes such as the Brown--Resnick model.
+  of spatial processes such as the Brown--Resnick.
 License: GPL-2
 Imports:
     MASS,
@@ -14,3 +14,4 @@ Imports:
     numbers,
     gmp
 RoxygenNote: 5.0.1
+URL: http://github.com/r-fndv/mvPot
