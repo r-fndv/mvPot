@@ -1,5 +1,5 @@
 ## Test environments
-* local OS X install, R 3.3.1
+* local OS X install, R 3.3.2
 * Debian 6.0.10, R 3.3.0
 * win-builder (devel and release)
 
@@ -11,10 +11,9 @@
 Maintainer: 'Raphael de Fondeville <raphael.de-fondeville@epfl.ch>'
 
 Possibly mis-spelled words in DESCRIPTION:
-Resnick (10:43)
+  extremal (10:14)
 
 
-
-Explanation: Resnick is the last name of a professor (Sidney Resnick, Cornell University), who developed the model implemented.
+Explanation: This adjectif is commonly used in extreme value theory to describe any distribution/process/function with a heavy tail.
 
 ---

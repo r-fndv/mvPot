@@ -1,3 +1,10 @@
+# mvPot 0.1.2
+
+* Modification of genVecQMC to return previous prime integer and ready to use generating vector (no division by p is needed).
+* Replaced calls to erf by pnorm in C++ library.
+* mvtNormCpp is now registered when package is loaded.
+
+
 # mvPot 0.1.1
 
 * Added a `NEWS.md` file to track changes of the package.
