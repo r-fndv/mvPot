@@ -9,16 +9,19 @@
 #' @param d Dimension of the multivariate integral to estimate.
 #' @param bt Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
 #' @param gm Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
-#' @return A \code{d}-dimensional generating vector for lattice rules with \code{p} samples.
+#' @return \code{primeP}, the highest prime number smaller than \code{p} and \code{genVec}, a \code{d}-dimensional generating vector defining an efficient lattice rule for \code{primeP} samples.
 #' @examples
-#' #Define the number of sample. Muste be a prime number.
-#' p <- 499
+#' #Define the number of sample.
+#' p <- 500
 #'
 #' #Choose a dimension
 #' d <- 300
 #'
 #' #Compute the generating vector
-#' genVecQMC(p,d)
+#' latticeRule <- genVecQMC(p,d)
+#'
+#' print(latticeRule$primeP)
+#' print(latticeRule$genVec)
 #'
 #' @export
 
@@ -53,7 +56,7 @@ genVecQMC <- function(p, d, bt = rep(1,d), gm = c(1, (4/5)^(0:(d-2)))){
     bump[s] <- w
     z[s] <- perm[w]
   }
-  return(z)
+  return(list(primeP = p, genVec = (z / p)))
 }
 
 

@@ -33,10 +33,10 @@
 #'
 #' #Compute generating vector
 #' p <- 499
-#' vec <- genVecQMC(p, (nrow(loc) - 1))
+#' latticeRule <- genVecQMC(p, (nrow(loc) - 1))
 #'
 #' #Estimate the multivariate distribution function
-#' mvtNormQuasiMonteCarlo(p, upperBound, cov, vec)
+#' mvtNormQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, latticeRule$genVec)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
@@ -65,7 +65,7 @@ mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
     stop('genVec must be a numeric vector of the same size as upperBound')
   }
 
-  tmp <-.C("mvtNormCpp",
+  tmp <-.C(mvtNormCpp,
            as.integer(p),
            as.integer(length(upperBound)),
            as.double(cov),

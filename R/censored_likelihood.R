@@ -37,10 +37,13 @@
 #'
 #' #Compute generating vector
 #' p <- 499
-#' vec <- genVecQMC(p, nrow(loc))
+#' latticeRule <- genVecQMC(p, (nrow(loc) - 1))
+#' primeP <- latticeRule$primeP
+#' vec <- latticeRule$genVec
+#'
 #'
 #' #Compute log-likelihood function
-#' censoredLikelihood(exceedances, loc, vario, rep(thres, nrow(loc)), p, vec)
+#' censoredLikelihood(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
 #' @references Wadsworth, J.L. and Tawn, J.A. (2013). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
@@ -96,7 +99,7 @@ censoredLikelihood = function(obs,
   if(!is.numeric(p)) {
     stop('p must be a prime number.')
   }
-  if(!is.numeric(vec)  || length(vec) < dim) {
+  if(!is.numeric(vec)  || length(vec) < (dim - 1)) {
     stop('vec must be generating vector with length at least equal to the number of locations.')
   }
   if(!is.numeric(nCores) || nCores < 1) {
@@ -137,7 +140,7 @@ censoredLikelihood = function(obs,
       upperBound = sqrt(gamma[-i,i]/2) - log(thres[i]/thres[-i])/sqrt(2*gamma[-i,i])
       cov = (gamma[-i,i]%*%t(identityVector) + t(gamma[i,-i]%*%t(identityVector)) - gamma[-i,-i]) / (2*sqrt(gamma[-i,i]%*%t(identityVector)*t(gamma[i,-i]%*%t(identityVector))))
 
-      tmp <-.C("mvtNormCpp",
+      tmp <-.C(mvtNormCpp,
                as.integer(p),
                as.integer(length(upperBound)),
                as.double(cov),
@@ -192,7 +195,7 @@ censoredLikelihood = function(obs,
           mle2 = max(1e-323, tmp)
           mle2 = - log(mle2)
         } else {
-          tmp <- .C("mvtNormCpp",
+          tmp <- .C(mvtNormCpp,
                     as.integer(p),
                     as.integer(length(muC)),
                     as.double(sigmaC),
