@@ -48,14 +48,13 @@ variogramMatrix[-ref,-ref])
 
 #Compute generating vector
 p <- 499
-vec <- genVecQMC(p, (nrow(loc) - 1))
+latticeRule <- genVecQMC(p, (nrow(loc) - 1))
 
 #Estimate the multivariate distribution function
-mvtNormQuasiMonteCarlo(p, upperBound, cov, vec)
+mvtNormQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, latticeRule$genVec)
 }
 \references{
 Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
 
             Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }
-

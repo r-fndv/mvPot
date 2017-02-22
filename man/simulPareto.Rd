@@ -43,4 +43,3 @@ loc <- expand.grid(1:4, 1:4)
 #Simulate data
 obs <- simulPareto(100, loc, vario)
 }
-

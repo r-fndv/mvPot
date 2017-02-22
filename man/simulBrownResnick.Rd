@@ -45,4 +45,3 @@ loc <- expand.grid(1:4, 1:4)
 #Simulate data
 obs <- simulBrownResnick(10, loc, vario)
 }
-

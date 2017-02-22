@@ -70,4 +70,3 @@ scoreEstimation(exceedances, loc, vario, weigthFun, dWeigthFun, u = threshold)
 \references{
 Fondeville, R. de and Davison A. (2016). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.
 }
-

@@ -52,4 +52,3 @@ spectralLikelihood(exceedances, loc, vario)
 \references{
 Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1):239-265
 }
-

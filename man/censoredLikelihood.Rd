@@ -76,14 +76,16 @@ exceedances <- obs[maxima > thres]
 
 #Compute generating vector
 p <- 499
-vec <- genVecQMC(p, nrow(loc))
+latticeRule <- genVecQMC(p, (nrow(loc) - 1))
+primeP <- latticeRule$primeP
+vec <- latticeRule$genVec
+
 
 #Compute log-likelihood function
-censoredLikelihood(exceedances, loc, vario, rep(thres, nrow(loc)), p, vec)
+censoredLikelihood(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
 }
 \references{
 Wadsworth, J.L. and Tawn, J.A. (2013). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
 
             Asadi, P., Davison A. C. and Engelke, S. (2016). Extremes on River Networks. Annals of Applied Statistics, to appear.
 }
-

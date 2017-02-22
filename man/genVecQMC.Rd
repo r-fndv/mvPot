@@ -16,7 +16,7 @@ genVecQMC(p, d, bt = rep(1, d), gm = c(1, (4/5)^(0:(d - 2))))
 \item{gm}{Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.}
 }
 \value{
-A \code{d}-dimensional generating vector for lattice rules with \code{p} samples.
+\code{primeP}, the highest prime number smaller than \code{p} and \code{genVec}, a \code{d}-dimensional generating vector defining an efficient lattice rule for \code{primeP} samples.
 }
 \description{
 Compute an efficient generating vector for quasi-Monte Carlo estimation.
@@ -26,14 +26,16 @@ The function computes a generating vector for efficient multivariate integral es
 based on D. Nuyens and R. Cools (2004).
 }
 \examples{
-#Define the number of sample. Muste be a prime number.
-p <- 499
+#Define the number of sample.
+p <- 500
 
 #Choose a dimension
 d <- 300
 
 #Compute the generating vector
-genVecQMC(p,d)
+latticeRule <- genVecQMC(p,d)
+
+print(latticeRule$primeP)
+print(latticeRule$genVec)
 
 }
-
