@@ -2,9 +2,11 @@
 
 export(censoredLikelihood)
 export(genVecQMC)
+export(mvTProbQuasiMonteCarlo)
 export(mvtNormQuasiMonteCarlo)
 export(scoreEstimation)
 export(simulBrownResnick)
 export(simulPareto)
 export(spectralLikelihood)
+useDynLib(mvPot,mvTProbCpp)
 useDynLib(mvPot,mvtNormCpp)

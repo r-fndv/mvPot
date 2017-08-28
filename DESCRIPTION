@@ -1,8 +1,8 @@
 Package: mvPot
 Type: Package
 Title: Multivariate Peaks-over-Threshold Modelling for Spatial Extreme Events
-Version: 0.1.2
-Date: 2017-02-21
+Version: 0.1.3
+Date: 2017-08-24
 Authors@R: person("Raphael", "de Fondeville", email = "raphael.de-fondeville@epfl.ch",
   role = c("aut", "cre"))
 Description: Tools for high-dimensional peaks-over-threshold inference and simulation

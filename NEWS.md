@@ -1,3 +1,8 @@
+# mvPot 0.1.3
+
+* Correction of cluster definition condition for parallel computing.
+* Addition of mvTProbQuasiMonteCarlo for efficient quasi Monte Carlo estimation of t ditribution functions.
+
 # mvPot 0.1.2
 
 * Modification of genVecQMC to return previous prime integer and ready to use generating vector (no division by p is needed).

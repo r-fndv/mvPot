@@ -1,5 +1,5 @@
 ## Test environments
-* local OS X install, R 3.3.2
+* local OS X install, R 3.4.1
 * Debian 6.0.10, R 3.3.0
 * win-builder (devel and release)
 
