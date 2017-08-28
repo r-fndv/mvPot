@@ -1,9 +1,9 @@
 #' Spectral log-likelihood function
 #'
-#' Compute the spectral log-likelihood function for Brown--Resnick model with peaks-over-threhold
+#' Compute the spectral log-likelihood function for Brown--Resnick model with peaks-over-threshold.
 #'
-#' The function compute the log-likelihood function based on the spectral representation developped
-#' by Engelelke et al. (2015). This simplified expression is obtained by conditioning on the event
+#' The function compute the log-likelihood function based on the spectral representation developed
+#' by Engelke et al. (2015). This simplified expression is obtained by conditioning on the event
 #' `\code{sum(x)} exceeds a high threshold \code{u > 1}'. Margins must have been standardized.
 #'
 #' @param obs List of observations vectors for which \code{sum(x)} exceeds a high threshold.
@@ -46,7 +46,7 @@ spectralLikelihood <- function(obs, loc, vario, nCores = 1, cl = NULL){
   if(!is.numeric(nCores) || nCores < 1) {
     stop('nCores must a positive number of cores to use for parallel computing.')
   }
-  if(nCores > 1 && length(grep("cluster",class(cl))) > 0) {
+  if(nCores > 1 && length(grep("cluster",class(cl))) == 0) {
     stop('For parallel computation, cl must an cluster created by makeCluster of the package parallel.')
   }
 

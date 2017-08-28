@@ -14,7 +14,7 @@
 #' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
 #' the random number generator has been properly initialized with
 #' \code{clusterSetRNGStream()}.
-#' @return List of \code{n} random vectors drawn from a mutlivariate Pareto distribution with semi-variogram \code{vario}.
+#' @return List of \code{n} random vectors drawn from a multivariate Pareto distribution with semi-variogram \code{vario}.
 #' @examples
 #' #Define variogram function
 #' vario <- function(h){
@@ -40,7 +40,7 @@ simulPareto <- function(n, loc, vario, nCores = 1, cl = NULL){
   if(!is.numeric(nCores) || nCores < 1) {
     stop('nCores must a positive number of cores to use for parallel computing.')
   }
-  if(nCores > 1 && length(grep("cluster",class(cl))) > 0) {
+  if(nCores > 1 && length(grep("cluster",class(cl))) == 0) {
     stop('For parallel computation, cl must an cluster created by makeCluster of the package parallel.')
   }
 

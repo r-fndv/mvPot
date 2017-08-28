@@ -42,7 +42,7 @@ simulBrownResnick <- function(n, loc, vario, nCores = 1, cl = NULL){
   if(!is.numeric(nCores) || nCores < 1) {
     stop('nCores must a positive number of cores to use for parallel computing.')
   }
-  if(nCores > 1 && length(grep("cluster",class(cl))) > 0) {
+  if(nCores > 1 && length(grep("cluster",class(cl))) == 0) {
     stop('For parallel computation, cl must an cluster created by makeCluster of the package parallel.')
   }
 

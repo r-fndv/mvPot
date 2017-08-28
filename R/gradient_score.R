@@ -1,16 +1,16 @@
 #' Gradient score function
 #'
-#' Compute the peaks-over-threhold gradient score function for the Brown--Resnick model.
+#' Compute the peaks-over-threshold gradient score function for the Brown--Resnick model.
 #'
-#' The function computes the gradient score based on the representation developped by Wadsworth et al. (2013).
+#' The function computes the gradient score based on the representation developed by Wadsworth et al. (2013).
 #' Margins must have been standardized. The weighting function must differentiable and verify some properties
-#' for consitency, see Fondeville and Davison (2016) for more details.
+#' for consistency, see Fondeville and Davison (2016) for more details.
 #'
 #'
 #' @param obs List of vectors exceeding an R-threshold, see Fondeville and Davison (2016) for more details.
 #' @param loc Matrix of coordinates as given by \code{expand.grid()}.
 #' @param vario Semi-variogram function taking a vector of coordinates as input.
-#' @param weigthFun Function of weigths.
+#' @param weigthFun Function of weights.
 #' @param dWeigthFun Partial derivative function of \code{weigthFun}.
 #' @param ... Parameters for \code{weigthFun} and \code{dWeigthFun}.
 #' @param nCores Number of cores used for the computation
@@ -67,7 +67,7 @@ scoreEstimation <- function(obs, loc, vario, weigthFun, dWeigthFun, nCores = 1, 
   if(!is.numeric(nCores) || nCores < 1) {
     stop('nCores must a positive number of cores to use for parallel computing.')
   }
-  if(nCores > 1 && length(grep("cluster",class(cl))) > 0) {
+  if(nCores > 1 && length(grep("cluster",class(cl))) == 0) {
     stop('For parallel computation, cl must an cluster created by makeCluster of the package parallel.')
   }
 

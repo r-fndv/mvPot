@@ -1,16 +1,16 @@
 #' Censored log-likelihood function
 #'
-#' Compute the peaks-over-threhold censored log-likelihood function for the Brown--Resnick model.
+#' Compute the peaks-over-threshold censored log-likelihood function for the Brown--Resnick model.
 #'
 #' The function computes the censored log-likelihood function based on the representation
-#' developped by Waddsworth et al. (2013) and Engelelke et al. (2015). Margins must have been
+#' developed by Wadsworth et al. (2013) and Engelke et al. (2015). Margins must have been
 #' standardized, for instance to unit Frechet.
 #'
 #' @param obs List of vectors for which at least one component exceeds a high threshold.
 #' @param loc Matrix of coordinates as given by \code{expand.grid()}.
 #' @param vario Semi-variogram function taking a vector of coordinates as input.
 #' @param u Vector of thresholds for censoring components.
-#' @param p Number of samples used for quasi-Monte carlo estimation. Must be a prime number.
+#' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
 #' @param vec Generating vector for the quasi-Monte Carlo procedure. For a given \code{p} and dimensionality,
 #' can be computed using \code{genVecQMC}.
 #' @param nCores Number of cores used for the computation
@@ -105,7 +105,7 @@ censoredLikelihood = function(obs,
   if(!is.numeric(nCores) || nCores < 1) {
     stop('nCores must a positive number of cores to use for parallel computing.')
   }
-  if(nCores > 1 && length(grep("cluster",class(cl))) > 0) {
+  if(nCores > 1 && length(grep("cluster",class(cl))) == 0) {
     stop('For parallel computation, cl must an cluster created by makeCluster of the package parallel.')
   }
 
