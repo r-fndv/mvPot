@@ -14,7 +14,7 @@ scoreEstimation(obs, loc, vario, weigthFun, dWeigthFun, nCores = 1,
 
 \item{vario}{Semi-variogram function taking a vector of coordinates as input.}
 
-\item{weigthFun}{Function of weigths.}
+\item{weigthFun}{Function of weights.}
 
 \item{dWeigthFun}{Partial derivative function of \code{weigthFun}.}
 
@@ -28,12 +28,12 @@ scoreEstimation(obs, loc, vario, weigthFun, dWeigthFun, nCores = 1,
 Evaluation of the gradient score function for the set of observations \code{obs} and semi-variogram \code{vario}.
 }
 \description{
-Compute the peaks-over-threhold gradient score function for the Brown--Resnick model.
+Compute the peaks-over-threshold gradient score function for the Brown--Resnick model.
 }
 \details{
-The function computes the gradient score based on the representation developped by Wadsworth et al. (2013).
+The function computes the gradient score based on the representation developed by Wadsworth et al. (2013).
 Margins must have been standardized. The weighting function must differentiable and verify some properties
-for consitency, see Fondeville and Davison (2016) for more details.
+for consistency, see Fondeville and Davison (2016) for more details.
 }
 \examples{
 #Define variogram function

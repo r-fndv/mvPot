@@ -35,7 +35,7 @@ censoredLikelihood(obs, loc, vario, u, p = 499, vec = c(1, 209, 109, 191,
 
 \item{u}{Vector of thresholds for censoring components.}
 
-\item{p}{Number of samples used for quasi-Monte carlo estimation. Must be a prime number.}
+\item{p}{Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.}
 
 \item{vec}{Generating vector for the quasi-Monte Carlo procedure. For a given \code{p} and dimensionality,
 can be computed using \code{genVecQMC}.}
@@ -48,11 +48,11 @@ can be computed using \code{genVecQMC}.}
 Evaluation of the censored log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
 }
 \description{
-Compute the peaks-over-threhold censored log-likelihood function for the Brown--Resnick model.
+Compute the peaks-over-threshold censored log-likelihood function for the Brown--Resnick model.
 }
 \details{
 The function computes the censored log-likelihood function based on the representation
-developped by Waddsworth et al. (2013) and Engelelke et al. (2015). Margins must have been
+developed by Wadsworth et al. (2013) and Engelke et al. (2015). Margins must have been
 standardized, for instance to unit Frechet.
 }
 \examples{

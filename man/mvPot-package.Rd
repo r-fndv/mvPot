@@ -7,23 +7,23 @@ Multivariate Peaks-over-Threshold Modelling for Extreme Events Analysis
 }
 \description{
 The mvPot package provides functions to perform high-dimensional peaks-over-threshold inference
-of spatial processes such as the Browm--Resnick. Parallel implementation for censored likelihood
+of spatial processes such as the Brown--Resnick. Parallel implementation for censored likelihood
 allows up to 500 locations, whereas the gradient score can handle thousands of locations. The package also
 includes simulations algorithms for the Brown-Resnick max-stable process as well as its associated Pareto process.
 }
 \details{
 \tabular{ll}{
-Package: \tab mvtPot\cr
+Package: \tab mvPot\cr
 Type: \tab Package\cr
 Version: \tab 0.1.0\cr
 Date: \tab 2016-05-26\cr
 License: \tab GPL2\cr
 }
-The mvPot package provides functions to perform high-dimensional peaks-over-threshold inference of spatial processes such as the Browm--Resnick.
+The mvPot package provides functions to perform high-dimensional peaks-over-threshold inference of spatial processes such as the Brown--Resnick.
 
-\code{spectralLikelihood} relies on the spectral likelihood as developped by Engelke et al. (2015). This methods is fast to compute, however it is not robust with regard to non-extreme components.
+\code{spectralLikelihood} relies on the spectral likelihood as developed by Engelke et al. (2015). This methods is fast to compute, however it is not robust with regard to non-extreme components.
 
-\code{censoredLikelihood} (Wadsworth and Tawn, 2013) is a likelihood function for exceedances with at least one component exceeding a threshold and where low components, i.e., components under their threshold,. This approach is robust and performs best but requires heavy computions. The implementation in this package makes use of quasi-Monte Carlo estimation and thus can handle 100 locations in a reasonable time and up to 500 when parallelized.
+\code{censoredLikelihood} (Wadsworth and Tawn, 2013) is a likelihood function for exceedances with at least one component exceeding a threshold and where low components, i.e., components under their threshold,. This approach is robust and performs best but requires heavy computations. The implementation in this package makes use of quasi-Monte Carlo estimation and thus can handle 100 locations in a reasonable time and up to 500 when parallelized.
 
 \code{scoreEstimation} is a faster alternative to the \code{censoredLikelihood}, which is more robust than \code{spectralLikelihood}. This method can also be used with any kind of differentiable risk functional (Fondeville and Davison, 2016). Here the algorithm is limited only by matrix inversion and thus thousands of locations can be used.
 

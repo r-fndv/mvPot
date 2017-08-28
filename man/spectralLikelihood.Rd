@@ -21,11 +21,11 @@ spectralLikelihood(obs, loc, vario, nCores = 1, cl = NULL)
 Evaluation of the spectral likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
 }
 \description{
-Compute the spectral log-likelihood function for Brown--Resnick model with peaks-over-threhold
+Compute the spectral log-likelihood function for Brown--Resnick model with peaks-over-threshold.
 }
 \details{
-The function compute the log-likelihood function based on the spectral representation developped
-by Engelelke et al. (2015). This simplified expression is obtained by conditioning on the event
+The function compute the log-likelihood function based on the spectral representation developed
+by Engelke et al. (2015). This simplified expression is obtained by conditioning on the event
 `\code{sum(x)} exceeds a high threshold \code{u > 1}'. Margins must have been standardized.
 }
 \examples{

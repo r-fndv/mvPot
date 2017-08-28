@@ -20,7 +20,7 @@ the random number generator has been properly initialized with
 \code{clusterSetRNGStream()}.}
 }
 \value{
-List of \code{n} random vectors drawn from a mutlivariate Pareto distribution with semi-variogram \code{vario}.
+List of \code{n} random vectors drawn from a multivariate Pareto distribution with semi-variogram \code{vario}.
 }
 \description{
 \code{simulPareto} provides \code{n} replicates of the multivariate Pareto distribution
