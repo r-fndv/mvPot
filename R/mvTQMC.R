@@ -6,6 +6,7 @@
 #' lattice rules to estimate the distribution function a multivariate normal distribution
 #' as described in Genz, A. and Bretz, F.(2009).
 #'
+#' @author Raphael de Fondeville
 #' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
 #' @param upperBound Vector of probabilities, i.e., the upper bound of the integral.
 #' @param cov Covariance matrix of the multivariate normal distribution. Must be semi-positive definite.
@@ -61,7 +62,7 @@ mvTProbQuasiMonteCarlo = function(p, upperBound, cov, nu, genVec){
     stop('upperBound must be a numeric matrix')
   }
 
-  if(length(cov[1,]) != length(upperBound) | length(cov[,1]) != length(upperBound)){
+  if(nrow(cov) != length(upperBound) | ncol(cov) != length(upperBound)){
     stop('upperBound and cov must have the same dimension')
   }
 

@@ -63,3 +63,6 @@ Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabi
 
             Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }
+\author{
+Raphael de Fondeville
+}

@@ -2,27 +2,27 @@
 % Please edit documentation in R/gradient_score.R
 \name{scoreEstimation}
 \alias{scoreEstimation}
-\title{Gradient score function}
+\title{Gradient score function for the Brown--Resnick model.}
 \usage{
-scoreEstimation(obs, loc, vario, weigthFun, dWeigthFun, nCores = 1,
-  cl = NULL, ...)
+scoreEstimation(obs, loc, vario, weightFun = NULL, dWeightFun = NULL,
+  nCores = 1L, cl = NULL, ...)
 }
 \arguments{
-\item{obs}{List of vectors exceeding an R-threshold, see Fondeville and Davison (2016) for more details.}
+\item{obs}{List of vectors exceeding an R-threshold, see de Fondeville and Davison (2016) for more details.}
 
 \item{loc}{Matrix of coordinates as given by \code{expand.grid()}.}
 
 \item{vario}{Semi-variogram function taking a vector of coordinates as input.}
 
-\item{weigthFun}{Function of weights.}
+\item{weightFun}{Function of weights.}
 
-\item{dWeigthFun}{Partial derivative function of \code{weigthFun}.}
+\item{dWeightFun}{Partial derivative function of \code{weightFun}.}
 
 \item{nCores}{Number of cores used for the computation}
 
 \item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
 
-\item{...}{Parameters for \code{weigthFun} and \code{dWeigthFun}.}
+\item{...}{Parameters for \code{weightFun} and \code{dWeightFun}.}
 }
 \value{
 Evaluation of the gradient score function for the set of observations \code{obs} and semi-variogram \code{vario}.
@@ -31,9 +31,9 @@ Evaluation of the gradient score function for the set of observations \code{obs}
 Compute the peaks-over-threshold gradient score function for the Brown--Resnick model.
 }
 \details{
-The function computes the gradient score based on the representation developed by Wadsworth et al. (2013).
-Margins must have been standardized. The weighting function must differentiable and verify some properties
-for consistency, see Fondeville and Davison (2016) for more details.
+The function computes the gradient score based on the representation developed by Wadsworth et al. (2014).
+Margins must have been standardized. The weighting function must be differentiable and verify some properties
+for consistency, see de Fondeville and Davison (2016) for more details.
 }
 \examples{
 #Define variogram function
@@ -51,13 +51,13 @@ obs <- simulPareto(1000, loc, vario)
 sums <- sapply(obs, sum)
 
 #Define weighting function
-weigthFun <- function(x, u){
-x * (1 - exp(-(sum(x) / u - 1)))
+weightFun <- function(x, u){
+ x * (1 - exp(-(sum(x / u) - 1)))
 }
 
 #Define partial derivative of weighting function
-dWeigthFun <- function(x, u){
-(1 - exp(-(sum(x) / u - 1))) + (x / u) * exp( - (sum(x) / u - 1))
+dWeightFun <- function(x, u){
+(1 - exp(-(sum(x / u) - 1))) + (x / u) * exp( - (sum(x / u) - 1))
 }
 
 #Select exceedances
@@ -65,8 +65,11 @@ threshold <- quantile(sums, 0.9)
 exceedances <- obs[sums > threshold]
 
 #Evaluate gradient score function
-scoreEstimation(exceedances, loc, vario, weigthFun, dWeigthFun, u = threshold)
+scoreEstimation(exceedances, loc, vario, weightFun = weightFun, dWeightFun, u = threshold)
 }
 \references{
-Fondeville, R. de and Davison A. (2016). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.
+de Fondeville, R. and A. C. Davison (2017). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.
+}
+\author{
+Raphael de Fondeville
 }
