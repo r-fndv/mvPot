@@ -1,3 +1,9 @@
+# mvPot 0.1.4
+
+* New functions censoredLikelihoodXS and rExtremalStudentParetoProcess. 
+* Censored likelihood for Brown-Resnick renamed censoredLikelihoodBR.
+* weight argument changed name (previously weigth)
+
 # mvPot 0.1.3
 
 * Correction of cluster definition condition for parallel computing.
