@@ -4,7 +4,7 @@
 \alias{spectralLikelihood}
 \title{Spectral log-likelihood function}
 \usage{
-spectralLikelihood(obs, loc, vario, nCores = 1, cl = NULL)
+spectralLikelihood(obs, loc, vario, nCores = 1L, cl = NULL)
 }
 \arguments{
 \item{obs}{List of observations vectors for which \code{sum(x)} exceeds a high threshold.}

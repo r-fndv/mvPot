@@ -7,7 +7,7 @@
 genVecQMC(p, d, bt = rep(1, d), gm = c(1, (4/5)^(0:(d - 2))))
 }
 \arguments{
-\item{p}{Prime number corresponding to the number of samples to use in the quasi-Monte Carlo procedure.}
+\item{p}{number of samples to use in the quasi-Monte Carlo procedure.}
 
 \item{d}{Dimension of the multivariate integral to estimate.}
 
@@ -23,7 +23,7 @@ Compute an efficient generating vector for quasi-Monte Carlo estimation.
 }
 \details{
 The function computes a generating vector for efficient multivariate integral estimation
-based on D. Nuyens and R. Cools (2004).
+based on D. Nuyens and R. Cools (2004). If \code{p} is not a prime, the nearest smaller prime is used instead.
 }
 \examples{
 #Define the number of sample.

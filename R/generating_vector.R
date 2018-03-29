@@ -3,9 +3,9 @@
 #' Compute an efficient generating vector for quasi-Monte Carlo estimation.
 #'
 #' The function computes a generating vector for efficient multivariate integral estimation
-#' based on D. Nuyens and R. Cools (2004).
+#' based on D. Nuyens and R. Cools (2004). If \code{p} is not a prime, the nearest smaller prime is used instead.
 #'
-#' @param p Prime number corresponding to the number of samples to use in the quasi-Monte Carlo procedure.
+#' @param p number of samples to use in the quasi-Monte Carlo procedure. 
 #' @param d Dimension of the multivariate integral to estimate.
 #' @param bt Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
 #' @param gm Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
