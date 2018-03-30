@@ -27,7 +27,7 @@ double stdnormal_inv(double p)
         2.445134137142996e+00,  3.754408661907416e+00
     };
 
-    register double q, t, u;
+    double q, t, u;
 
     q = std::min(p,1-p);
     if(q == 0){

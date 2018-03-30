@@ -1,6 +1,6 @@
 ## Test environments
-* local OS X install, R 3.4.1
-* Debian 6.0.10, R 3.3.0
+* local OS X install, R 3.4.4
+* Debian 6.0.10, R 3.4.4
 * win-builder (devel and release)
 
 ## R CMD check results
