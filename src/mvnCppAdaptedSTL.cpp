@@ -27,7 +27,9 @@ double stdnormal_inv(double p)
         2.445134137142996e+00,  3.754408661907416e+00
     };
 
-    double q, t, u;
+    double q = 0;
+    double t = 0;
+    double u = 0;
 
     q = std::min(p,1-p);
     if(q == 0){
@@ -340,6 +342,7 @@ void pointEstimateTProb(int j,
     Free(x);
     Free(e);
     Free(y);
+    Free(b);
 }
 
 
@@ -473,7 +476,7 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
     }
 
     int *h_d = tmp_d;
-    double *h_generatingVector = tmp_generatingVector, *h_randomShift = (double*) R_alloc(*tmp_d, sizeof(double)), *h_b = &b[0], *h_L =&vecL[0], *h_est = est;
+    double *h_generatingVector = tmp_generatingVector, *h_randomShift = (double*) R_alloc(*tmp_d, sizeof(double)), *h_b = &b[0], *h_L =&vecL[0], *h_est = est, *h_nu = nu;
 
     GetRNGstate();
 
@@ -486,7 +489,7 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
         *h_est = 0;
 
         for (int j = 0; j < *tmp_xn; j++) {
-            pointEstimateTProb(j, h_d, h_generatingVector, h_randomShift, h_b, h_L, h_est, nu);
+            pointEstimateTProb(j, h_d, h_generatingVector, h_randomShift, h_b, h_L, h_est, h_nu);
         }
         diff = ((*h_est / *tmp_xn) - p) / (i + 1);
         p += diff;
@@ -510,7 +513,7 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
 
 static const R_CMethodDef cMethods[] = {
     {"mvtNormCpp", (DL_FUNC) &mvtNormCpp, 7},
-    {"mvTProbCpp", (DL_FUNC) &mvTProbCpp, 7},
+    {"mvTProbCpp", (DL_FUNC) &mvTProbCpp, 8},
     {NULL, NULL, 0}
 };
 
