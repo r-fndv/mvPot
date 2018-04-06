@@ -8,7 +8,7 @@
 #'
 #' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
 #' @param upperBound Vector of probabilities, i.e., the upper bound of the integral.
-#' @param cov Covariance matrix of the multivariate normal distribution. Must be semi-positive definite.
+#' @param cov Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 #' WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
 #' that this property is verified.
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
@@ -42,9 +42,11 @@
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
 #'
 #'             Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
-
 mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
-
+  if(missing(p) && missing(genVec)){
+    p <- 499L
+    genVec <- genVecQMC(p, nrow(cov))$genVec
+  }
   if(!is.numeric(p) | length(p) > 1) {
     stop('p must be a prime number.')
   }
@@ -57,14 +59,13 @@ mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
     stop('upperBound must be a numeric matrix')
   }
 
-  if(length(cov[1,]) != length(upperBound) | length(cov[,1]) != length(upperBound)){
+  if(!isTRUE(all(dim(cov) == length(upperBound)))){
     stop('upperBound and cov must have the same dimension')
   }
 
   if(!is.numeric(genVec) | !is.vector(genVec) | length(upperBound) != length(genVec)){
     stop('genVec must be a numeric vector of the same size as upperBound')
   }
-
   tmp <-.C(mvtNormCpp,
            as.integer(p),
            as.integer(length(upperBound)),
@@ -72,7 +73,8 @@ mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
            as.double(upperBound),
            as.double(genVec),
            est = double(length=1),
-           err = double(length=1)
+           err = double(length=1), 
+           package = "mvPot"
   )
 
   c(estimate = tmp$est, error = tmp$err)
