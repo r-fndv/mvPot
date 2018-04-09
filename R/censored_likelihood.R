@@ -44,7 +44,7 @@
 #'
 #'
 #' #Compute log-likelihood function
-#' censoredLikelihood(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
+#' censoredLikelihoodBR(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
 #' @references Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
