@@ -174,7 +174,8 @@ censoredLikelihoodXS = function(obs,
                as.double(nu + 1),
                as.double(vec[1:length(upperBound)]),
                est = double(length=1),
-               err = double(length=1)
+               err = double(length=1),
+               PACKAGE = "mvPot"
       )
       return(tmp$est)
 
@@ -233,7 +234,8 @@ censoredLikelihoodXS = function(obs,
                     as.double(nu + k),
                     as.double(vec[1:length(muC)]),
                     est = double(length=1),
-                    err = double(length=1)
+                    err = double(length=1),
+                    PACKAGE = "mvPot"
           )
           
           # tmp <- TruncatedNormal::mvTcdf(l = rep(-Inf, nrow(sigmaC)), u = u[posUnder]^(1/nu)-as.vector(muC),

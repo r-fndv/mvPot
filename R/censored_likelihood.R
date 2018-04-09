@@ -141,7 +141,8 @@ censoredLikelihoodBR <- function(obs,
                as.double(upperBound), 
                as.double(vec[1:length(upperBound)]), 
                est = double(length=1), 
-               err = double(length=1)
+               err = double(length=1),
+               PACKAGE = "mvPot"
       )
       tmp$est
 
@@ -196,7 +197,8 @@ censoredLikelihoodBR <- function(obs,
                     as.double(as.vector(muC)), 
                     as.double(vec[1:length(muC)]), 
                     est = double(length=1), 
-                    err = double(length=1)
+                    err = double(length=1),
+                    PACKAGE = "mvPot"
           )
           if(tmp$est == 0){
             mle2 = - log(.Machine$double.xmin)

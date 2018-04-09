@@ -74,7 +74,7 @@ mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
            as.double(genVec),
            est = double(length=1),
            err = double(length=1), 
-           package = "mvPot"
+           PACKAGE = "mvPot"
   )
 
   c(estimate = tmp$est, error = tmp$err)
