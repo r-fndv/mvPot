@@ -7,7 +7,7 @@
 #' @param n sample size
 #' @param Sigma correlation matrix
 #' @param nu degrees of freedom parameter
-#' @param normalize logical; should unit Pareto samples be returned?
+#' @param normalize logical; should unit Pareto samples above \eqn{\kappa} be returned?
 #' @param matchol Cholesky matrix \eqn{\mathbf{A}}{A} such that \eqn{\mathbf{A}\mathbf{A}^\top = \boldsymbol{\Sigma}}{AA^t = \Sigma}. Corresponds to \code{t(chol(Sigma))}. Default to \code{NULL}, in which case the Cholesky root is computed within the function.
 #' @references Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 #' @author Emeric Thibaud, Leo Belzile
@@ -16,8 +16,8 @@
 #' @examples 
 #' loc <- expand.grid(1:4, 1:4)
 #' Sigma <- exp(-as.matrix(dist(loc))^1.5)
-#' rExtremalStudentParetoProcess(10000, Sigma, nu = 2)
-rExtremalStudentParetoProcess <- function(n, Sigma, nu, normalize = TRUE, matchol = NULL){
+#' rExtremalStudentParetoProcess(1000, Sigma, nu = 2)
+rExtremalStudentParetoProcess <- function(n, Sigma, nu, normalize = FALSE, matchol = NULL){
   d <- nrow(Sigma)
   # Check the input is indeed a correlation matrix
   if(!isTRUE(all.equal(as.vector(diag(Sigma)), rep(1, d)))){

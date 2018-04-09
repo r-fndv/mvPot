@@ -4,7 +4,7 @@
 \alias{rExtremalStudentParetoProcess}
 \title{Simulation of extremal Student generalized Pareto vectors}
 \usage{
-rExtremalStudentParetoProcess(n, Sigma, nu, normalize = TRUE,
+rExtremalStudentParetoProcess(n, Sigma, nu, normalize = FALSE,
   matchol = NULL)
 }
 \arguments{
@@ -14,7 +14,7 @@ rExtremalStudentParetoProcess(n, Sigma, nu, normalize = TRUE,
 
 \item{nu}{degrees of freedom parameter}
 
-\item{normalize}{logical; should unit Pareto samples be returned?}
+\item{normalize}{logical; should unit Pareto samples above \eqn{\kappa} be returned?}
 
 \item{matchol}{Cholesky matrix \eqn{\mathbf{A}}{A} such that \eqn{\mathbf{A}\mathbf{A}^\top = \boldsymbol{\Sigma}}{AA^t = \Sigma}. Corresponds to \code{t(chol(Sigma))}. Default to \code{NULL}, in which case the Cholesky root is computed within the function.}
 }
@@ -26,7 +26,7 @@ the vector is scaled by the exponent measure \eqn{\kappa} so that the maximum of
 \examples{
 loc <- expand.grid(1:4, 1:4)
 Sigma <- exp(-as.matrix(dist(loc))^1.5)
-rExtremalStudentParetoProcess(10000, Sigma, nu = 2)
+rExtremalStudentParetoProcess(1000, Sigma, nu = 2)
 }
 \references{
 Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.

@@ -44,7 +44,7 @@
 #'
 #'
 #' #Compute log-likelihood function
-#' censoredLikelihood(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
+#' censoredLikelihoodBR(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
 #' @references Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
@@ -141,7 +141,8 @@ censoredLikelihoodBR <- function(obs,
                as.double(upperBound), 
                as.double(vec[1:length(upperBound)]), 
                est = double(length=1), 
-               err = double(length=1)
+               err = double(length=1),
+               PACKAGE = "mvPot"
       )
       tmp$est
 
@@ -196,7 +197,8 @@ censoredLikelihoodBR <- function(obs,
                     as.double(as.vector(muC)), 
                     as.double(vec[1:length(muC)]), 
                     est = double(length=1), 
-                    err = double(length=1)
+                    err = double(length=1),
+                    PACKAGE = "mvPot"
           )
           if(tmp$est == 0){
             mle2 = - log(.Machine$double.xmin)

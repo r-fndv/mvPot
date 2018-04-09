@@ -11,7 +11,7 @@ mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec)
 
 \item{upperBound}{Vector of probabilities, i.e., the upper bound of the integral.}
 
-\item{cov}{Covariance matrix of the multivariate normal distribution. Must be semi-positive definite.
+\item{cov}{Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
 that this property is verified.}
 

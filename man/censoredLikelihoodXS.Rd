@@ -83,7 +83,7 @@ eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 2, rep(thres, nrow(
 \references{
 Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 
-Ribatet, M. (2013). Spatial extremes: max-stable processes at work. Journal de la \enc{Société}{Societe} \enc{Française}{Francaise} de Statistique, 154(2), 156-177.
+Ribatet, M. (2013). Spatial extremes: max-stable processes at work. JSFS, 154(2), 156-177.
 }
 \author{
 Leo Belzile

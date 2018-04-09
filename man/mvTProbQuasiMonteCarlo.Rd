@@ -11,7 +11,7 @@ mvTProbQuasiMonteCarlo(p, upperBound, cov, nu, genVec)
 
 \item{upperBound}{Vector of probabilities, i.e., the upper bound of the integral.}
 
-\item{cov}{Covariance matrix of the multivariate normal distribution. Must be semi-positive definite.
+\item{cov}{Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
 that this property is verified.}
 
@@ -36,7 +36,7 @@ as described in Genz, A. and Bretz, F.(2009).
 loc <- expand.grid(1:4, 1:4)
 ref <- sample.int(16, 1)
 
-#Defined degrees of freedom
+#Define degrees of freedom
 nu <- 3
 
 #Compute variogram matrix
