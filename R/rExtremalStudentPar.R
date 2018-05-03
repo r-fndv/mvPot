@@ -1,7 +1,7 @@
 #' Simulation of extremal Student generalized Pareto vectors
 #' 
-#' The algorithm is described in section 4 of Thibaud and Opitz. It uses the Cholesky decomposition of the matrix \code{Sigma}
-#' to generate samples on the unit sphere and an accept-reject algorithm to decide which samples to retain. If \code{normalize = TRUE} (the default), 
+#' Simulation of Pareto processes associated to the max functional. The algorithm is described in section 4 of Thibaud and Opitz. It uses the Cholesky decomposition of the matrix \code{Sigma}
+#' to generate samples on the unit sphere and an accept-reject algorithm to decide which samples to retain. If \code{normalize = TRUE}, 
 #' the vector is scaled by the exponent measure \eqn{\kappa} so that the maximum of the sample is greater than \eqn{\kappa}.
 #' 
 #' @param n sample size

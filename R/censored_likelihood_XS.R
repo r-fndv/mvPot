@@ -20,8 +20,7 @@
 #' @param likelihood string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
 #'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
 #' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
-#' @param censored boolean indicating whether to censor observations lying below the threshold. Default to \code{TRUE}
-#' @return Evaluation of the censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}.
+#' @param std logical; if \code{std = TRUE}, consider \code{obs/u} and exceedances over 1 rather than \code{obs} \eqn{>} \code{u}. Affects the exponent measure returned by the function. Default to \code{FALSE}.
 #' @references Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 #' @references Ribatet, M. (2013). Spatial extremes: max-stable processes at work. JSFS, 154(2), 156-177.
 #' @author Leo Belzile
@@ -48,13 +47,13 @@
 #'
 #' #Evaluate risk functional
 #' maxima <- sapply(obs, max)
-#' thres <- quantile(maxima, 0.9)
+#' thresh <- quantile(maxima, 0.9)
 #'
 #' #Select exceedances
 #' exceedances <- obs[maxima > thres]
 #'
 #' #Compute log-likelihood function
-#' eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 2, rep(thres, nrow(loc)), primeP, vec)
+#' eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 2, rep(thresh, length = nrow(loc)), primeP, vec)
 #' 
 #' @export
 censoredLikelihoodXS = function(obs,
@@ -67,8 +66,8 @@ censoredLikelihoodXS = function(obs,
                               nCores = 1L,
                               cl = NULL,
                               likelihood = c("mgp", "poisson","binom"), 
-                              ntot = length(obs), 
-                              censored = TRUE){
+                              ntot = length(obs),
+                              std = FALSE){
   likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"))[1]
   #Duplicate threshold vector if too short
   if(length(u) == 1L){
@@ -162,8 +161,8 @@ censoredLikelihoodXS = function(obs,
      #print(i)
     if(i < (D + 1)) {
       #Computation for the exponent measure
-      upperBound = exp((log(u[-i]) - log(u[i])) / nu)- Sigma[-i, i]
-      cov = (Sigma[-i, -i] - Sigma[-i, i, drop = FALSE] %*% Sigma[i, -i, drop = FALSE]) / (nu + 1)
+      upperBound <- switch(std + 1L, exp((log(u[-i]) - log(u[i])) / nu) - Sigma[-i, i], 1- Sigma[-i,i])
+      cov <- (Sigma[-i, -i] - Sigma[-i, i, drop = FALSE] %*% Sigma[i, -i, drop = FALSE]) / (nu + 1)
       # return(mvTProbQuasiMonteCarlo(p = p, upperBound = upperBound, cov = cov, nu = nu, genVec = vec [1:length(upperBound)])[1])
       # return(TruncatedNormal::mvTcdf(l = rep(-Inf, length(upperBound)), u = upperBound, Sig = cov, df = nu, n = 1e4)$prob)
       tmp <-.C(mvTProbCpp,
@@ -181,15 +180,19 @@ censoredLikelihoodXS = function(obs,
 
     } else {
       j = i - D
-
+      if(std){
+       observation <-   .subset2(obs, j) / u
+       posUnder <- which(observation <= 1)
+       posAbove <- which(observation > 1)
+      } else{
       observation <- .subset2(obs, j)
-   
-      #Computation of the density function
       posUnder <- which(observation <= u)
       posAbove <- which(observation > u)
-      if(censored){
-        observation <- pmax(observation, u)
       }
+      # if(censored){
+      #   observation <- pmax(observation, u)
+      # }
+      #Computation of the density function
       k <- D - length(posUnder) #number of points above threshold
       if(k == 0){
        stop("Invalid input. The list `obs` must contain vectors with at least one exceedance!") 
@@ -223,10 +226,12 @@ censoredLikelihoodXS = function(obs,
 
         if(k == (D - 1)){ #1-dimensional censored component, use pt rather than QMC
           #rather than take (observation[posUnder]^(1 / nu)-as.vector(muC)) / sqrt(sigmaC)
-          tmp = stats::pt((u[posUnder]^(1/nu) - as.vector(muC)) / sqrt(sigmaC[1]), df = nu + k)
+          tmp = switch(std + 1L, stats::pt((u[posUnder]^(1/nu) - as.vector(muC)) / sqrt(sigmaC[1]), df = nu + k),
+                       stats::pt((1 - as.vector(muC)) / sqrt(sigmaC[1]), df = nu + k))
           nll2 = - log(max(1e-323, tmp))
         } else {
-          tmp <- .C(mvTProbCpp,
+          tmp <- switch(std + 1L, 
+                    .C(mvTProbCpp,
                     as.integer(p),
                     as.integer(length(muC)),
                     as.double(sigmaC),
@@ -236,7 +241,18 @@ censoredLikelihoodXS = function(obs,
                     est = double(length=1),
                     err = double(length=1),
                     PACKAGE = "mvPot"
-          )
+          ), .C(mvTProbCpp,
+                as.integer(p),
+                as.integer(length(muC)),
+                as.double(sigmaC),
+                as.double(1-as.vector(muC)),
+                as.double(nu + k),
+                as.double(vec[1:length(muC)]),
+                est = double(length=1),
+                err = double(length=1),
+                PACKAGE = "mvPot"
+          ))
+          
           
           # tmp <- TruncatedNormal::mvTcdf(l = rep(-Inf, nrow(sigmaC)), u = u[posUnder]^(1/nu)-as.vector(muC),
           #                                Sig = sigmaC, df = nu + k, n = 1e4)
@@ -269,7 +285,7 @@ censoredLikelihoodXS = function(obs,
   } else {
     pro <- lapply(1:(D + n), mleEst)
   }
-   exponentMeasure <- sum(unlist(pro)[1:D]/u)
+   exponentMeasure <- switch(std + 1L, sum(unlist(pro)[1:D]/u), sum(unlist(pro)[1:D]))
    if(likelihood == "binom" && exponentMeasure > 1){
      warning("The threshold vector `u` must be high enough to yield an exponent measure lower than 1. 
              \nSwitching to Poisson likelihood")

@@ -5,13 +5,14 @@
 #' The function uses a quasi-Monte Carlo procedure based on randomly shifted
 #' lattice rules to estimate the distribution function a multivariate normal distribution
 #' as described in Genz, A. and Bretz, F.(2009).
+#' 
+#' For compatibility reasons, the function handles the univariate case, which is passed on to \code{pt}.
 #'
 #' @author Raphael de Fondeville
 #' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
 #' @param upperBound Vector of probabilities, i.e., the upper bound of the integral.
 #' @param cov Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
-#' WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
-#' that this property is verified.
+#' WARNING: for performance in high-dimensions, no check is done to ensure positive-definiteness of the covariance matrix. It is the user responsibility to ensure that this property is verified.
 #' @param nu Degrees of freedom of the t distribution.
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
 #' @return An estimate of the distribution function along with empirical Monte Carlo error.
@@ -28,7 +29,7 @@
 #' variogramMatrix <- ((sqrt((outer(loc[,1],loc[,1],"-"))^2 +
 #' (outer(loc[,2],loc[,2],"-"))^2)) / 2)^(1.5)
 #'
-#' #Define an upper boud
+#' #Define an upper bound
 #' upperBound <- variogramMatrix[-ref,ref]
 #'
 #' #Compute covariance matrix
@@ -43,12 +44,21 @@
 #' #Estimate the multivariate distribution function
 #' mvTProbQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, nu, latticeRule$genVec)
 #' @export
+#' @importFrom stats pt
 #' @useDynLib mvPot mvTProbCpp
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
 #'
 #'             Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 
 mvTProbQuasiMonteCarlo = function(p, upperBound, cov, nu, genVec){
+  
+  if(length(cov) == 1L){
+    if(length(upperBound) != length(cov)){
+      stop("Invalid argument for one-dimensional case")
+    }
+   return(stats::pt(q = c(upperBound/sqrt(cov)), df = nu))
+   }
+  
   if(missing(p) && missing(genVec)){
     p <- 499L
     genVec <- genVecQMC(p, nrow(cov))$genVec

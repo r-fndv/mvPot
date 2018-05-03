@@ -12,8 +12,7 @@ mvTProbQuasiMonteCarlo(p, upperBound, cov, nu, genVec)
 \item{upperBound}{Vector of probabilities, i.e., the upper bound of the integral.}
 
 \item{cov}{Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
-WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
-that this property is verified.}
+WARNING: for performance in high-dimensions, no check is done to ensure positive-definiteness of the covariance matrix. It is the user responsibility to ensure that this property is verified.}
 
 \item{nu}{Degrees of freedom of the t distribution.}
 
@@ -29,6 +28,8 @@ Estimate the multivariate t distribution function with quasi-Monte Carlo method.
 The function uses a quasi-Monte Carlo procedure based on randomly shifted
 lattice rules to estimate the distribution function a multivariate normal distribution
 as described in Genz, A. and Bretz, F.(2009).
+
+For compatibility reasons, the function handles the univariate case, which is passed on to \code{pt}.
 }
 \examples{
 
@@ -43,7 +44,7 @@ nu <- 3
 variogramMatrix <- ((sqrt((outer(loc[,1],loc[,1],"-"))^2 +
 (outer(loc[,2],loc[,2],"-"))^2)) / 2)^(1.5)
 
-#Define an upper boud
+#Define an upper bound
 upperBound <- variogramMatrix[-ref,ref]
 
 #Compute covariance matrix

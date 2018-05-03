@@ -19,8 +19,8 @@ rExtremalStudentParetoProcess(n, Sigma, nu, normalize = FALSE,
 \item{matchol}{Cholesky matrix \eqn{\mathbf{A}}{A} such that \eqn{\mathbf{A}\mathbf{A}^\top = \boldsymbol{\Sigma}}{AA^t = \Sigma}. Corresponds to \code{t(chol(Sigma))}. Default to \code{NULL}, in which case the Cholesky root is computed within the function.}
 }
 \description{
-The algorithm is described in section 4 of Thibaud and Opitz. It uses the Cholesky decomposition of the matrix \code{Sigma}
-to generate samples on the unit sphere and an accept-reject algorithm to decide which samples to retain. If \code{normalize = TRUE} (the default), 
+Simulation of Pareto processes associated to the max functional. The algorithm is described in section 4 of Thibaud and Opitz. It uses the Cholesky decomposition of the matrix \code{Sigma}
+to generate samples on the unit sphere and an accept-reject algorithm to decide which samples to retain. If \code{normalize = TRUE}, 
 the vector is scaled by the exponent measure \eqn{\kappa} so that the maximum of the sample is greater than \eqn{\kappa}.
 }
 \examples{
