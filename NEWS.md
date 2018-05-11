@@ -1,3 +1,8 @@
+# mvPot 0.1.5
+
+* Fix to censoredLikelihoodXS for cases when likelihood != "mgp"
+* New option for censoredLikelihoodBR (matrix of data, Poisson and binomial likelihood)
+
 # mvPot 0.1.4
 
 * New functions censoredLikelihoodXS and rExtremalStudentParetoProcess. 

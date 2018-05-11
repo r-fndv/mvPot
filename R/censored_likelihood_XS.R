@@ -50,7 +50,7 @@
 #' thresh <- quantile(maxima, 0.9)
 #'
 #' #Select exceedances
-#' exceedances <- obs[maxima > thres]
+#' exceedances <- obs[maxima > thresh]
 #'
 #' #Compute log-likelihood function
 #' eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 5, u = thresh, primeP, vec)
