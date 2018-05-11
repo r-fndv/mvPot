@@ -10,7 +10,7 @@
 #' @param loc Matrix of coordinates as given by \code{expand.grid()}.
 #' @encoding UTF8
 #' @param corrFun correlation function taking a vector of coordinates as input.
-#' @param u Vector of thresholds for censoring components.
+#' @param u Vector of thresholds under which to censor components.
 #' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
 #' @param vec Generating vector for the quasi-Monte Carlo procedure. For a given \code{p} and dimensionality,
 #' can be computed using \code{genVecQMC}.
@@ -20,7 +20,7 @@
 #' @param likelihood string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
 #'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
 #' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
-#' @param std logical; if \code{std = TRUE}, consider \code{obs/u} and exceedances over 1 rather than \code{obs} \eqn{>} \code{u}. Affects the exponent measure returned by the function. Default to \code{FALSE}.
+#' @param std logical; if \code{std = TRUE}, consider \code{obs/u} for scalar u and exceedances over 1 rather than \code{obs} \eqn{>} \code{u} for potentially vector \code{u}. This affects the value of the log-likelihood function. Default to \code{FALSE}.
 #' @references Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 #' @references Ribatet, M. (2013). Spatial extremes: max-stable processes at work. JSFS, 154(2), 156-177.
 #' @author Leo Belzile
@@ -42,7 +42,7 @@
 #' 
 #' #Simulate data
 #' Sigma <- exp(-as.matrix(dist(loc))^0.8)
-#' obs <- rExtremalStudentParetoProcess(n = 1000, nu = 2, Sigma = Sigma)
+#' obs <- rExtremalStudentParetoProcess(n = 1000, nu = 5, Sigma = Sigma)
 #' obs <- split(obs, row(obs))
 #'
 #' #Evaluate risk functional
@@ -53,7 +53,7 @@
 #' exceedances <- obs[maxima > thres]
 #'
 #' #Compute log-likelihood function
-#' eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 2, rep(thresh, length = nrow(loc)), primeP, vec)
+#' eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 5, u = thresh, primeP, vec)
 #' 
 #' @export
 censoredLikelihoodXS = function(obs,
@@ -70,6 +70,10 @@ censoredLikelihoodXS = function(obs,
                               std = FALSE){
   likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"))[1]
   #Duplicate threshold vector if too short
+  if(std && length(u) > 1L){
+   warning("Invalid threshold `u`: must be univariate. Switching to `std = FALSE`")
+    std <- FALSE
+  }
   if(length(u) == 1L){
     u <- rep(u, nrow(loc))
   }
@@ -161,6 +165,7 @@ censoredLikelihoodXS = function(obs,
      #print(i)
     if(i < (D + 1)) {
       #Computation for the exponent measure
+      #With std == TRUE, all u are the same components, so we get zero
       upperBound <- switch(std + 1L, exp((log(u[-i]) - log(u[i])) / nu) - Sigma[-i, i], 1- Sigma[-i,i])
       cov <- (Sigma[-i, -i] - Sigma[-i, i, drop = FALSE] %*% Sigma[i, -i, drop = FALSE]) / (nu + 1)
       # return(mvTProbQuasiMonteCarlo(p = p, upperBound = upperBound, cov = cov, nu = nu, genVec = vec [1:length(upperBound)])[1])
@@ -285,20 +290,25 @@ censoredLikelihoodXS = function(obs,
   } else {
     pro <- lapply(1:(D + n), mleEst)
   }
-   exponentMeasure <- switch(std + 1L, sum(unlist(pro)[1:D]/u), sum(unlist(pro)[1:D]))
-   if(likelihood == "binom" && exponentMeasure > 1){
-     warning("The threshold vector `u` must be high enough to yield an exponent measure lower than 1. 
-             \nSwitching to Poisson likelihood")
-     likelihood <- "poisson"
-   }
+   
    if(likelihood != "mgp" && ntot == n){
     warning("Total number of observations currently same as number of exceedances.")
    }
-   res <- switch(likelihood,
-                 mgp = n * log(exponentMeasure) + sum(unlist(pro)[(D + 1):(n + D)]),
-                 poisson = - ntot * exponentMeasure + sum(unlist(pro)[(D + 1):(n + D)]),
-                 binom = (ntot - n)* log(1-exponentMeasure) + sum(unlist(pro)[(D + 1):(n + D)])
-   )
-   attributes(res) <- list("ExponentMeasure" = exponentMeasure)
+   if(std){
+     exponentMeasureOne <- sum(unlist(pro)[1:D])
+     res <- switch(likelihood,
+                   mgp = n * log(exponentMeasureOne) + sum(unlist(pro)[(D + 1):(n + D)]),
+                   poisson =  (exponentMeasureOne / u[1]) + sum(unlist(pro)[(D + 1):(n + D)]),
+                   binom =  - (ntot - n) * log(1 - (exponentMeasureOne / u) / ntot) + sum(unlist(pro)[(D + 1):(n + D)])
+     )
+   } else{ #subtract, different thresholds
+     exponentMeasure <- sum(unlist(pro)[1:D]/u)
+     res <- switch(likelihood,
+                   mgp = n * log(exponentMeasure) + sum(unlist(pro)[(D + 1):(n + D)]),
+                   poisson = exponentMeasure + sum(unlist(pro)[(D + 1):(n + D)]),
+                   binom =  - (ntot - n) * log(1 - exponentMeasure / ntot) + sum(unlist(pro)[(D + 1):(n + D)])
+     )
+   }
+  attributes(res) <- list("ExponentMeasure" = sum(unlist(pro)[1:D]/u))
   return(res)
 }

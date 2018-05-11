@@ -2,21 +2,24 @@
 #'
 #' Compute the peaks-over-threshold censored negative log-likelihood function for the Brown--Resnick model.
 #'
-#' The function computes the censored log-likelihood function based on the representation
+#' The function computes the censored negative log-likelihood function based on the representation
 #' developed by Wadsworth et al. (2014) and Engelke et al. (2015). Margins must have been
-#' standardized, for instance to unit Frechet.
+#' standardized first, for instance to the unit Frechet scale.
 #'
 #' @author Raphael de Fondeville
 #' @param obs List of vectors for which at least one component exceeds a high threshold.
 #' @param loc Matrix of coordinates as given by \code{expand.grid()}.
 #' @param vario Semi-variogram function taking a vector of coordinates as input.
-#' @param u Vector of thresholds for censoring components.
+#' @param u Vector of threshold under which to censor components.
 #' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
 #' @param vec Generating vector for the quasi-Monte Carlo procedure. For a given \code{p} and dimensionality, 
 #' can be computed using \code{genVecQMC}.
 #' @param nCores Number of cores used for the computation
 #' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @return Evaluation of the negative censored log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+#' @param likelihood string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
+#'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
+#' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
+#' @return Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure}.
 #' @examples
 #' #Define semi-variogram function
 #' vario <- function(h){
@@ -44,7 +47,7 @@
 #'
 #'
 #' #Compute log-likelihood function
-#' censoredLikelihoodBR(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
+#' censoredLikelihoodBR(obs = exceedances, loc = loc, vario = vario, u = thres, p = primeP, vec = vec, ntot = 1000)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
 #' @references Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
@@ -57,7 +60,23 @@ censoredLikelihoodBR <- function(obs,
                               p = 499L, 
                               vec = NULL, 
                               nCores = 1L, 
-                              cl = NULL){
+                              cl = NULL,
+                              likelihood = c("mgp", "poisson","binom"), 
+                              ntot = length(obs)){
+  
+  likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"))[1]
+  #Default for total number of observations is length of list
+  if(is.null(ntot) && is.list(obs)){
+    ntot <- length(obs)
+  }
+  if(is.matrix(obs)){ #Not converted to list
+    if(is.null(ntot)){
+      ntot <- nrow(obs)
+    }
+    #Keep only values above the threshold
+    obs <- obs[apply(obs, 1, function(vec){isTRUE(any(vec > u))}),]
+    obs <- split(obs, row(obs)) #create list
+  }
   if(is.null(vec) && isTRUE(all.equal(p, 499L))){
     vec <- c(1, 209, 109, 191, 67, 51, 120, 93, 87, 157, 178, 45, 137, 84, 198, 
               61, 232, 113, 182, 150, 57, 169, 141, 79, 132, 163, 38, 85, 131, 106, 
@@ -82,6 +101,10 @@ censoredLikelihoodBR <- function(obs,
   }
   if(length(u) == 1L){
     u <- rep(u, nrow(loc))
+  } else{
+   if(abs(max(u) - min(u)) >  1e-10){
+     stop("The threshold vector `u` must be the replicate of a scalar. Differing components not currently handled")
+  } 
   }
   n <- length(obs)
   D <- nrow(loc)
@@ -224,12 +247,20 @@ censoredLikelihoodBR <- function(obs,
     }
 
     blockSize <- floor((D + n) / nCores) + 1
-    prod <- parallel::parLapply(cl, 1:(nCores), blockedMLE)
+    pro <- parallel::parLapply(cl, 1:(nCores), blockedMLE)
   } else {
-    prod <- lapply(1:(D + n), mleEst)
+    pro <- lapply(1:(D + n), mleEst)
   }
-
-  res <- (n) * log(sum(unlist(prod)[1:D])) + sum(unlist(prod)[(D + 1):(n + D)])
+  exponentMeasure <- sum(unlist(pro)[1:D])
+  if(likelihood != "mgp" && ntot == n){
+    warning("Total number of observations currently same as number of exceedances.")
+  }
+  res <- switch(likelihood, #This is NEGATIVE log -likelihood, components (D+1):(n+D) are already negated
+                mgp = n * log(exponentMeasure) + sum(unlist(pro)[(D + 1):(n + D)]),
+                poisson =  sum(unlist(pro)[1:D] / u) + sum(unlist(pro)[(D + 1):(n + D)]),
+                binom =  n * (log(u[1]) + log(ntot)) - (ntot - n) * log(1 - sum(unlist(pro)[1:D] / u) / ntot) + sum(unlist(pro)[(D + 1):(n + D)])
+  ) #TODO check what to put for Poisson (ntot or no component there)
+  attributes(res) <- list("ExponentMeasure" = sum(unlist(pro)[1:D] / u))
   return(res)
 }
 

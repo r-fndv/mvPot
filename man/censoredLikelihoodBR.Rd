@@ -6,7 +6,8 @@
 \title{Censored log-likelihood function for the Brown--Resnick model.}
 \usage{
 censoredLikelihoodBR(obs, loc, vario, u, p = 499L, vec = NULL,
-  nCores = 1L, cl = NULL)
+  nCores = 1L, cl = NULL, likelihood = c("mgp", "poisson", "binom"),
+  ntot = length(obs))
 
 censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL, nCores = 1L,
   cl = NULL)
@@ -18,7 +19,7 @@ censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL, nCores = 1L,
 
 \item{vario}{Semi-variogram function taking a vector of coordinates as input.}
 
-\item{u}{Vector of thresholds for censoring components.}
+\item{u}{Vector of threshold under which to censor components.}
 
 \item{p}{Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.}
 
@@ -28,17 +29,22 @@ can be computed using \code{genVecQMC}.}
 \item{nCores}{Number of cores used for the computation}
 
 \item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
+
+\item{likelihood}{string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
+\code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.}
+
+\item{ntot}{integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood}
 }
 \value{
-Evaluation of the negative censored log-likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure}.
 }
 \description{
 Compute the peaks-over-threshold censored negative log-likelihood function for the Brown--Resnick model.
 }
 \details{
-The function computes the censored log-likelihood function based on the representation
+The function computes the censored negative log-likelihood function based on the representation
 developed by Wadsworth et al. (2014) and Engelke et al. (2015). Margins must have been
-standardized, for instance to unit Frechet.
+standardized first, for instance to the unit Frechet scale.
 }
 \examples{
 #Define semi-variogram function
@@ -67,7 +73,7 @@ vec <- latticeRule$genVec
 
 
 #Compute log-likelihood function
-censoredLikelihoodBR(exceedances, loc, vario, rep(thres, nrow(loc)), primeP, vec)
+censoredLikelihoodBR(obs = exceedances, loc = loc, vario = vario, u = thres, p = primeP, vec = vec, ntot = 1000)
 }
 \references{
 Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
