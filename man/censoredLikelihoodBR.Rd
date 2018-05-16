@@ -77,9 +77,11 @@ censoredLikelihoodBR(obs = exceedances, loc = loc, vario = vario,
  u = thres, p = primeP, vec = vec, ntot = 1000)
 }
 \references{
-Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
+Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value 
+ Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
 
-Asadi, P., Davison A. C. and S. Engelke (2015). Extremes on River Networks. Annals of Applied Statistics, 9(4), 2023-2050.
+Asadi, P., Davison A. C. and S. Engelke (2015). Extremes on River Networks. 
+ Annals of Applied Statistics, 9(4), 2023-2050.
 }
 \author{
 Raphael de Fondeville

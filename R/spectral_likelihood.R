@@ -1,8 +1,8 @@
 #' Spectral log-likelihood function
 #'
-#' Compute the spectral log-likelihood function for Brown--Resnick model with peaks-over-threshold.
+#' Compute the negative spectral log-likelihood function for Brown--Resnick model with peaks-over-threshold.
 #'
-#' The function compute the log-likelihood function based on the spectral representation developed
+#' The function compute the negative log-likelihood function based on the spectral representation developed
 #' by Engelke et al. (2015). This simplified expression is obtained by conditioning on the event
 #' `\code{sum(x)} exceeds a high threshold \code{u > 1}'. Margins must have been standardized.
 #'
@@ -11,7 +11,7 @@
 #' @param vario Semi-variogram function taking a vector of coordinates as input.
 #' @param nCores Number of cores used for the computation
 #' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @return Evaluation of the spectral likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+#' @return Negative spectral log-likelihood function evaluated at the set of observations \code{obs} with semi-variogram \code{vario}.
 #' @examples
 #' #Define semi-variogram function
 #' vario <- function(h){
@@ -36,7 +36,9 @@
 #' @references Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1):239-265
 
 spectralLikelihood <- function(obs, loc, vario, nCores = 1L, cl = NULL){
-
+  if(is.matrix(obs)){ #Not converted to list
+    obs <- split(obs, row(obs)) #create list
+  }
   if(class(obs) != "list" || length(obs) < 1 || class(obs[[1]]) != "numeric"){
     stop('obs must be a list of vectors')
   }
@@ -76,7 +78,7 @@ spectralLikelihood <- function(obs, loc, vario, nCores = 1L, cl = NULL){
     stop('The semi-variogram is not valid for the locations provided.')
   })
 
-  psi <- (outer(gamma[-1,1],gamma[-1,1], "+") - (gamma[-1,-1]))
+  psi <- (outer(gamma[-1,1], gamma[-1,1], "+") - (gamma[-1,-1]))
   invPsi <- MASS::ginv(psi)
 
   productCovMatrix = function(i){
