@@ -13,7 +13,7 @@ mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec)
 
 \item{cov}{Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
-that this property is verified.}
+that the matrix is positive semi-definite.}
 
 \item{genVec}{Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.}
 }
@@ -54,7 +54,7 @@ latticeRule <- genVecQMC(p, (nrow(loc) - 1))
 mvtNormQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, latticeRule$genVec)
 }
 \references{
-Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
+Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 
-            Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
+Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }

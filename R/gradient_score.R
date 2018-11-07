@@ -4,10 +4,10 @@
 #'
 #' The function computes the gradient score based on the representation developed by Wadsworth et al. (2014).
 #' Margins must have been standardized. The weighting function must be differentiable and verify some properties
-#' for consistency, see de Fondeville and Davison (2016) for more details.
+#' for consistency, see de Fondeville and Davison (2018) for more details.
 #'
 #' @author Raphael de Fondeville
-#' @param obs List of vectors exceeding an R-threshold, see de Fondeville and Davison (2016) for more details.
+#' @param obs List of vectors exceeding an R-threshold, see de Fondeville and Davison (2018) for more details.
 #' @param loc Matrix of coordinates as given by \code{expand.grid()}.
 #' @param vario Semi-variogram function taking a vector of coordinates as input.
 #' @param weightFun Function of weights.
@@ -15,6 +15,9 @@
 #' @param ... Parameters for \code{weightFun} and \code{dWeightFun}.
 #' @param nCores Number of cores used for the computation
 #' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
+#' @references de Fondeville, R. and Davison A. (2018). High-dimensional peaks-over-threshold inference. Biometrika, 105(3), 575-592.
+#' @references Wadsworth, J. L. and J. A. Tawn (2014). Efficient inference for spatial extreme value
+#'  processes associated to log-Gaussian random functions. Biometrika, 101(1), 1-15.
 #' @return Evaluation of the gradient score function for the set of observations \code{obs} and semi-variogram \code{vario}.
 #' @examples
 #' #Define variogram function
@@ -48,8 +51,6 @@
 #' #Evaluate gradient score function
 #' scoreEstimation(exceedances, loc, vario, weightFun = weightFun, dWeightFun, u = threshold)
 #' @export
-#' @references de Fondeville, R. and A. C. Davison (2017). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.
-
 scoreEstimation <- function(obs, loc, vario, weightFun = NULL, dWeightFun = NULL, nCores = 1L, cl = NULL,  ... ){
 
   #Backwards compatibility for versions 0.1.3 and below
@@ -63,10 +64,10 @@ scoreEstimation <- function(obs, loc, vario, weightFun = NULL, dWeightFun = NULL
     ellipsis[['dWeigthFun']] <- NULL
   }
   if(is.null(weightFun)){
-   stop("`weightFun` argument missing, with no default value.") 
+   stop("`weightFun` argument missing, with no default value.")
   }
   if(is.null(dWeightFun)){
-    stop("`dWeightFun` argument missing, with no default value.") 
+    stop("`dWeightFun` argument missing, with no default value.")
   }
   if(class(obs) != "list" || length(obs) < 1 || class(obs[[1]]) != "numeric"){
     stop('`obs` must be a list of vectors.')
@@ -142,4 +143,3 @@ scoreEstimation <- function(obs, loc, vario, weightFun = NULL, dWeightFun = NULL
 
   sum(unlist(scores))/n
 }
-

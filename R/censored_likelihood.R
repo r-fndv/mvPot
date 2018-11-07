@@ -12,11 +12,11 @@
 #' @param vario Semi-variogram function taking a vector of coordinates as input.
 #' @param u Vector of threshold under which to censor components.
 #' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
-#' @param vec Generating vector for the quasi-Monte Carlo procedure. For a given \code{p} and dimensionality, 
+#' @param vec Generating vector for the quasi-Monte Carlo procedure. For a given prime \code{p} and dimension,
 #' can be computed using \code{genVecQMC}.
 #' @param nCores Number of cores used for the computation
 #' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @param likelihood string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
+#' @param likelihood string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto,
 #'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
 #' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
 #' @return Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure}.
@@ -47,25 +47,25 @@
 #'
 #'
 #' #Compute log-likelihood function
-#' censoredLikelihoodBR(obs = exceedances, loc = loc, vario = vario, 
+#' censoredLikelihoodBR(obs = exceedances, loc = loc, vario = vario,
 #'  u = thres, p = primeP, vec = vec, ntot = 1000)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
-#' @references Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value 
-#'  Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
-#' @references Asadi, P., Davison A. C. and S. Engelke (2015). Extremes on River Networks. 
+#' @references Wadsworth, J. L. and J. A. Tawn (2014). Efficient inference for spatial extreme value
+#'  processes associated to log-Gaussian random functions. Biometrika, 101(1), 1-15.
+#' @references Asadi, P., Davison A. C. and S. Engelke (2015). Extremes on River Networks.
 #'  Annals of Applied Statistics, 9(4), 2023-2050.
-censoredLikelihoodBR <- function(obs, 
-                              loc, 
-                              vario, 
-                              u, 
-                              p = 499L, 
-                              vec = NULL, 
-                              nCores = 1L, 
+censoredLikelihoodBR <- function(obs,
+                              loc,
+                              vario,
+                              u,
+                              p = 499L,
+                              vec = NULL,
+                              nCores = 1L,
                               cl = NULL,
-                              likelihood = c("mgp", "poisson","binom"), 
+                              likelihood = c("mgp", "poisson","binom"),
                               ntot = length(obs)){
-  
+
   likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"))[1]
   #Default for total number of observations is length of list
   if(is.null(ntot) && is.list(obs)){
@@ -80,17 +80,17 @@ censoredLikelihoodBR <- function(obs,
     obs <- split(obs, row(obs)) #create list
   }
   if(is.null(vec) && isTRUE(all.equal(p, 499L))){
-    vec <- c(1, 209, 109, 191, 67, 51, 120, 93, 87, 157, 178, 45, 137, 84, 198, 
-              61, 232, 113, 182, 150, 57, 169, 141, 79, 132, 163, 38, 85, 131, 106, 
-              96, 165, 233, 179, 32, 228, 73, 233, 96, 131, 147, 32, 179, 165, 179, 
-              228, 32, 147, 165, 106, 228, 32, 179, 131, 32, 131, 228, 179, 106, 
-              165, 147, 179, 106, 147, 228, 165, 165, 179, 147, 228, 106, 106, 32, 
-              228, 147, 179, 32, 228, 106, 147, 32, 147, 228, 106, 179, 106, 179, 
-              228, 32, 147, 179, 32, 228, 106, 147, 147, 106, 179, 228, 32, 106, 
-              228, 147, 179, 32, 228, 147, 32, 179, 106, 32, 106, 179, 147, 147, 
-              179, 228, 106, 32, 106, 228, 179, 32, 147, 228, 179, 106, 32, 147, 
-              228, 106, 179, 32, 106, 147, 228, 179, 32, 228, 106, 179, 147, 32, 
-              147, 179, 106, 228, 106, 179, 147, 228, 32, 228, 179, 147, 106, 147, 
+    vec <- c(1, 209, 109, 191, 67, 51, 120, 93, 87, 157, 178, 45, 137, 84, 198,
+              61, 232, 113, 182, 150, 57, 169, 141, 79, 132, 163, 38, 85, 131, 106,
+              96, 165, 233, 179, 32, 228, 73, 233, 96, 131, 147, 32, 179, 165, 179,
+              228, 32, 147, 165, 106, 228, 32, 179, 131, 32, 131, 228, 179, 106,
+              165, 147, 179, 106, 147, 228, 165, 165, 179, 147, 228, 106, 106, 32,
+              228, 147, 179, 32, 228, 106, 147, 32, 147, 228, 106, 179, 106, 179,
+              228, 32, 147, 179, 32, 228, 106, 147, 147, 106, 179, 228, 32, 106,
+              228, 147, 179, 32, 228, 147, 32, 179, 106, 32, 106, 179, 147, 147,
+              179, 228, 106, 32, 106, 228, 179, 32, 147, 228, 179, 106, 32, 147,
+              228, 106, 179, 32, 106, 147, 228, 179, 32, 228, 106, 179, 147, 32,
+              147, 179, 106, 228, 106, 179, 147, 228, 32, 228, 179, 147, 106, 147,
               32, rep(179, 42)) / 499
     } else if(is.null(vec) && !isTRUE(all.equal(p, 499L))){
     stop("Invalid generating vector `vec`")
@@ -106,7 +106,7 @@ censoredLikelihoodBR <- function(obs,
   } else{
    if(abs(max(u) - min(u)) >  1e-10){
      stop("The threshold vector `u` must be the replicate of a scalar. Differing components not currently handled")
-  } 
+  }
   }
   n <- length(obs)
   D <- nrow(loc)
@@ -159,13 +159,13 @@ censoredLikelihoodBR <- function(obs,
       upperBound = sqrt(gamma[-i, i]/2) # - log(thres[i]/thres[-i])/sqrt(2*gamma[-i, i]) ##superfluous b/c log(1)=0
       cov = (gamma[-i, i] %*% t(identityVector) + t(gamma[i, -i] %*% t(identityVector)) - gamma[-i, -i]) / (2*sqrt(gamma[-i, i] %*% t(identityVector)*t(gamma[i, -i] %*% t(identityVector))))
 
-      tmp <-.C(mvtNormCpp, 
-               as.integer(p), 
-               as.integer(length(upperBound)), 
-               as.double(cov), 
-               as.double(upperBound), 
-               as.double(vec[1:length(upperBound)]), 
-               est = double(length=1), 
+      tmp <-.C(mvtNormCpp,
+               as.integer(p),
+               as.integer(length(upperBound)),
+               as.double(cov),
+               as.double(upperBound),
+               as.double(vec[1:length(upperBound)]),
+               est = double(length=1),
                err = double(length=1),
                PACKAGE = "mvPot"
       )
@@ -215,13 +215,13 @@ censoredLikelihoodBR <- function(obs,
           mle2 = max(1e-323, tmp)
           mle2 = - log(mle2)
         } else {
-          tmp <- .C(mvtNormCpp, 
-                    as.integer(p), 
-                    as.integer(length(muC)), 
-                    as.double(sigmaC), 
-                    as.double(as.vector(muC)), 
-                    as.double(vec[1:length(muC)]), 
-                    est = double(length=1), 
+          tmp <- .C(mvtNormCpp,
+                    as.integer(p),
+                    as.integer(length(muC)),
+                    as.double(sigmaC),
+                    as.double(as.vector(muC)),
+                    as.double(vec[1:length(muC)]),
+                    est = double(length=1),
                     err = double(length=1),
                     PACKAGE = "mvPot"
           )
@@ -270,8 +270,8 @@ censoredLikelihoodBR <- function(obs,
 #' @export
 #' @rdname censoredLikelihoodBR
 censoredLikelihood <- function(obs, loc, vario, u, p = 499L, vec = NULL, nCores = 1L, cl = NULL){
-  .Deprecated(new = "censoredLikelihood", package = "mvPot", 
-              msg = "Please use the function `censoredLikelihoodBR` to estimate the censored likelihood of the Brown-Resnick processes.", 
+  .Deprecated(new = "censoredLikelihood", package = "mvPot",
+              msg = "Please use the function `censoredLikelihoodBR` to estimate the censored likelihood of the Brown-Resnick processes.",
               old = "censoredLikelihood")
   censoredLikelihoodBR(obs = obs, loc = loc, vario = vario, u = u, p = p, vec = vec, nCores= nCores, cl = cl)
 }

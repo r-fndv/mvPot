@@ -39,3 +39,6 @@ print(latticeRule$primeP)
 print(latticeRule$genVec)
 
 }
+\references{
+Nuyens, D. and R. Cools (2004). Fast component-by-component construction, a reprise for different kernels. In Monte Carlo and Quasi-Monte Carlo Methods 2004, H. Niederreiter and D. Talay, eds. Springer: Berlin, 373-87.
+}

@@ -9,8 +9,8 @@ censoredLikelihoodBR(obs, loc, vario, u, p = 499L, vec = NULL,
   nCores = 1L, cl = NULL, likelihood = c("mgp", "poisson", "binom"),
   ntot = length(obs))
 
-censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL, nCores = 1L,
-  cl = NULL)
+censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL,
+  nCores = 1L, cl = NULL)
 }
 \arguments{
 \item{obs}{List of vectors for which at least one component exceeds a high threshold.}
@@ -23,14 +23,14 @@ censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL, nCores = 1L,
 
 \item{p}{Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.}
 
-\item{vec}{Generating vector for the quasi-Monte Carlo procedure. For a given \code{p} and dimensionality, 
+\item{vec}{Generating vector for the quasi-Monte Carlo procedure. For a given prime \code{p} and dimension,
 can be computed using \code{genVecQMC}.}
 
 \item{nCores}{Number of cores used for the computation}
 
 \item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
 
-\item{likelihood}{string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
+\item{likelihood}{string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto,
 \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.}
 
 \item{ntot}{integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood}
@@ -73,14 +73,14 @@ vec <- latticeRule$genVec
 
 
 #Compute log-likelihood function
-censoredLikelihoodBR(obs = exceedances, loc = loc, vario = vario, 
+censoredLikelihoodBR(obs = exceedances, loc = loc, vario = vario,
  u = thres, p = primeP, vec = vec, ntot = 1000)
 }
 \references{
-Wadsworth, J. L. and J. A. Tawn (2014). Efficient Inference for Spatial Extreme Value 
- Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
+Wadsworth, J. L. and J. A. Tawn (2014). Efficient inference for spatial extreme value
+ processes associated to log-Gaussian random functions. Biometrika, 101(1), 1-15.
 
-Asadi, P., Davison A. C. and S. Engelke (2015). Extremes on River Networks. 
+Asadi, P., Davison A. C. and S. Engelke (2015). Extremes on River Networks.
  Annals of Applied Statistics, 9(4), 2023-2050.
 }
 \author{

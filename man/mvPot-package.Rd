@@ -36,17 +36,17 @@ Raphael de Fondeville
 Maintainer: Raphael de Fondeville <raphael.de-fondeville@epfl.ch>
 }
 \references{
-Fondeville, R. de and Davison A. (2018). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.
+de Fondeville, R. and Davison A. (2018). High-dimensional peaks-over-threshold inference. Biometrika, 105(3), 575-592.
 
-Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1):239-265
+Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1), 239-265
 
-Wadsworth, J.L. and Tawn, J.A. (2013). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
+Wadsworth, J.L. and Tawn, J.A. (2013). Efficient inference for spatial extreme value processes associated to log-Gaussian random functions. Biometrika, 101(1), 1-15.
 
 Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 
-Dombry, C., Engelke S., and Oesting, M. (2016). Exact Simulation of Max-stable processes. Biometrika, To appear.
+Dombry, C., Engelke, S. and Oesting, M. (2016). Exact simulation of max-stable processes. Biometrika, 103(2), 303-317.
 
-Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
+Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 
 Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }

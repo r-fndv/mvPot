@@ -33,7 +33,7 @@
 #' #Evaluate the spectral function
 #' spectralLikelihood(exceedances, loc, vario)
 #' @export
-#' @references Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1):239-265
+#' @references Engelke, S. et al. (2015). Estimation of Huesler-Reiss distributions and Brown-Resnick processes. Journal of the Royal Statistical Society: Series B, 77(1), 239-265
 
 spectralLikelihood <- function(obs, loc, vario, nCores = 1L, cl = NULL){
   if(is.matrix(obs)){ #Not converted to list

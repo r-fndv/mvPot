@@ -10,7 +10,9 @@
 #' @param upperBound Vector of probabilities, i.e., the upper bound of the integral.
 #' @param cov Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 #' WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
-#' that this property is verified.
+#' that the matrix is positive semi-definite.
+#' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
+#' @references Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
 #' @return An estimate of the distribution function along with empirical Monte Carlo error.
 #' @examples
@@ -39,9 +41,6 @@
 #' mvtNormQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, latticeRule$genVec)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
-#' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
-#'
-#'             Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
   if(missing(p) && missing(genVec)){
     p <- 499L
@@ -73,7 +72,7 @@ mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
            as.double(upperBound),
            as.double(genVec),
            est = double(length=1),
-           err = double(length=1), 
+           err = double(length=1),
            PACKAGE = "mvPot"
   )
 

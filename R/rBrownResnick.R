@@ -17,6 +17,7 @@
 #' \code{clusterSetRNGStream()}.
 #' @return List of \code{n} random vectors drawn from a max-stable Brown--Resnick process
 #'  with semi-variogram \code{vario} at location \code{loc}.
+#' @references Dombry, C., Engelke, S. and M. Oesting. Exact simulation of max-stable processes. Biometrika, 103(2), 303-317.
 #' @examples
 #' #Define semi-variogram function
 #' vario <- function(h){
@@ -103,7 +104,3 @@ paretoBR <- function(k, dim, gamma){
 
   return(paretoProcess)
 }
-
-
-
-

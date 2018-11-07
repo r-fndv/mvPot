@@ -189,7 +189,7 @@ extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
     for (int rec = 1; rec < *tmp_d; rec ++){
         min = LONG_MAX;
         pos = rec;
-        //------------------COMPUTE CANDDIDATE FOR NEW UPPERBOUND
+        //------------------COMPUTE CANDIDATE FOR NEW UPPER BOUND
         std::vector< double > b_New_Temp(*tmp_d - rec);
         int count = 0;
         for (int itPos = rec; itPos < *tmp_d; ++itPos){
@@ -203,7 +203,7 @@ extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
             count++;
         }
 
-        //FIND THE MINUMUM
+        //FIND THE MINIMUM
         for (int itPos = 0; itPos < *tmp_d - rec; ++itPos){
             double b_phi = exp(-pow(b_New_Temp[itPos],2)/2)/ sqrt(2 * M_PI);
             //double b_Phi = 0.5 + 0.5 * erf_R(b_New_Temp[itPos] / sqrt(2.0));
@@ -317,7 +317,7 @@ void pointEstimateTProb(int j,
         
         y[k-1] = stdnormal_inv(e[k - 1] * x[k - 1]);
         
-        //DEAL WITH INFINTE BOUNDS
+        //DEAL WITH INFINITE BOUNDS
         if(!(R_FINITE(y[k-1]))) {
             if(y[k-1] > 0){
                 value = 1;
@@ -420,7 +420,7 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
     for (int rec = 1; rec < *tmp_d; rec ++){
         min = LONG_MAX;
         pos = rec;
-        //------------------COMPUTE CANDDIDATE FOR NEW UPPERBOUND
+        //------------------COMPUTE CANDIDATE FOR NEW UPPER BOUND
         std::vector< double > b_New_Temp(*tmp_d - rec);
         int count = 0;
         for (int itPos = rec; itPos < *tmp_d; ++itPos){
@@ -434,7 +434,7 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
             count++;
         }
 
-        //FIND THE MINUMUM
+        //FIND THE MINIMUM
         for (int itPos = 0; itPos < *tmp_d - rec; ++itPos){
             double b_phi = exp(-pow(b_New_Temp[itPos],2)/2)/ sqrt(2 * M_PI);
             //double b_Phi = 0.5 + 0.5 * erf_R(b_New_Temp[itPos] / sqrt(2.0));

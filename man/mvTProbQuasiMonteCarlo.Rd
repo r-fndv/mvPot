@@ -60,9 +60,9 @@ latticeRule <- genVecQMC(p, (nrow(loc) - 1))
 mvTProbQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, nu, latticeRule$genVec)
 }
 \references{
-Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
+Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 
-            Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
+Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }
 \author{
 Raphael de Fondeville

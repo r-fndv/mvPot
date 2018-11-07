@@ -5,7 +5,7 @@
 #' The function uses a quasi-Monte Carlo procedure based on randomly shifted
 #' lattice rules to estimate the distribution function a multivariate normal distribution
 #' as described in Genz, A. and Bretz, F.(2009).
-#' 
+#'
 #' For compatibility reasons, the function handles the univariate case, which is passed on to \code{pt}.
 #'
 #' @author Raphael de Fondeville
@@ -46,19 +46,18 @@
 #' @export
 #' @importFrom stats pt
 #' @useDynLib mvPot mvTProbCpp
-#' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
-#'
-#'             Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
+#' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
+#' @references Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 
 mvTProbQuasiMonteCarlo = function(p, upperBound, cov, nu, genVec){
-  
+
   if(length(cov) == 1L){
     if(length(upperBound) != length(cov)){
       stop("Invalid argument for one-dimensional case")
     }
    return(stats::pt(q = c(upperBound/sqrt(cov)), df = nu))
    }
-  
+
   if(missing(p) && missing(genVec)){
     p <- 499L
     genVec <- genVecQMC(p, nrow(cov))$genVec
