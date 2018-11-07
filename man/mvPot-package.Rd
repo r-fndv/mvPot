@@ -12,24 +12,22 @@ allows up to 500 locations, whereas the gradient score can handle thousands of l
 includes simulations algorithms for the Brown-Resnick max-stable process as well as its associated Pareto process.
 }
 \details{
-\tabular{ll}{
-Package: \tab mvPot\cr
-Type: \tab Package\cr
-Version: \tab 0.1.0\cr
-Date: \tab 2016-05-26\cr
-License: \tab GPL2\cr
-}
+
 The mvPot package provides functions to perform high-dimensional peaks-over-threshold inference of spatial processes such as the Brown--Resnick.
 
 \code{spectralLikelihood} relies on the spectral likelihood as developed by Engelke et al. (2015). This methods is fast to compute, however it is not robust with regard to non-extreme components.
 
-\code{censoredLikelihood} (Wadsworth and Tawn, 2013) is a likelihood function for exceedances with at least one component exceeding a threshold and where low components, i.e., components under their threshold,. This approach is robust and performs best but requires heavy computations. The implementation in this package makes use of quasi-Monte Carlo estimation and thus can handle 100 locations in a reasonable time and up to 500 when parallelized.
+\code{censoredLikelihoodBR} (Wadsworth and Tawn, 2013) is a likelihood function for exceedances with at least one component exceeding a threshold and where low components, i.e., components under their threshold,. This approach is robust and performs best but requires heavy computations. The implementation in this package makes use of quasi-Monte Carlo estimation and thus can handle 100 locations in a reasonable time and up to 500 when parallelized. The analog function for extremal Student processes is \code{censoredLikelihoodXS}.
 
 \code{scoreEstimation} is a faster alternative to the \code{censoredLikelihood}, which is more robust than \code{spectralLikelihood}. This method can also be used with any kind of differentiable risk functional (Fondeville and Davison, 2016). Here the algorithm is limited only by matrix inversion and thus thousands of locations can be used.
 
 \code{simulBrownResnick} is an exact algorithm for simulation of Brown-Resnick max-stable processes as described in Dombry et al. (2015).
 
 \code{simulPareto} allows for simulation of Pareto processes associated to log-Gaussian random functions.
+
+\code{rExtremalStudentParetoProcess} allows for simulation of Pareto processes associated to Student random functions, using the accept-reject algorithm of Thibaud and Opitz (2015).
+
+\code{mvtNormQuasiMonteCarlo} and \code{mvTProbQuasiMonteCarlo} are Cpp functions to evaluate the distribution function of Gaussian and t integrals, using a quasi-Monte Carlo algorithmbased on randomly shifted lattice rules.
 
 }
 \author{
@@ -38,15 +36,17 @@ Raphael de Fondeville
 Maintainer: Raphael de Fondeville <raphael.de-fondeville@epfl.ch>
 }
 \references{
-Fondeville, R. de and Davison A. (2016). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.
+de Fondeville, R. and Davison A. (2018). High-dimensional peaks-over-threshold inference. Biometrika, 105(3), 575-592.
 
-Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1):239-265
+Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1), 239-265
 
-Wadsworth, J.L. and Tawn, J.A. (2013). Efficient Inference for Spatial Extreme Value Processes Associated to Log-Gaussian Random Function. Biometrika, 101(1):1-15.
+Wadsworth, J.L. and Tawn, J.A. (2013). Efficient inference for spatial extreme value processes associated to log-Gaussian random functions. Biometrika, 101(1), 1-15.
 
-Dombry, C., Engelke S., and Oesting, M. (2016). Exact Simulation of Max-stable processes. Biometrika, To appear.
+Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 
-Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer, Dordrecht.
+Dombry, C., Engelke, S. and Oesting, M. (2016). Exact simulation of max-stable processes. Biometrika, 103(2), 303-317.
+
+Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 
 Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }

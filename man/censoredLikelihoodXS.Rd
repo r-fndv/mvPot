@@ -7,7 +7,7 @@
 \usage{
 censoredLikelihoodXS(obs, loc, corrFun, nu, u, p = 499L, vec = NULL,
   nCores = 1L, cl = NULL, likelihood = c("mgp", "poisson", "binom"),
-  ntot = length(obs), censored = TRUE)
+  ntot = length(obs), std = FALSE)
 }
 \arguments{
 \item{obs}{List of vectors for which at least one component exceeds a high threshold.}
@@ -18,7 +18,7 @@ censoredLikelihoodXS(obs, loc, corrFun, nu, u, p = 499L, vec = NULL,
 
 \item{nu}{degrees of freedom of the Student process}
 
-\item{u}{Vector of thresholds for censoring components.}
+\item{u}{Vector of thresholds under which to censor components.}
 
 \item{p}{Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.}
 
@@ -34,11 +34,9 @@ can be computed using \code{genVecQMC}.}
 
 \item{ntot}{integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood}
 
-\item{censored}{boolean indicating whether to censor observations lying below the threshold. Default to \code{TRUE}}
+\item{std}{logical; if \code{std = TRUE}, consider \code{obs/u} for scalar u and exceedances over 1 rather than \code{obs} \eqn{>} \code{u} for potentially vector \code{u}. This affects the value of the log-likelihood function. Default to \code{FALSE}.}
 }
 \value{
-Evaluation of the censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}.
-
 Negative censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}, with \code{attributes}  \code{exponentMeasure}.
 }
 \description{
@@ -66,18 +64,18 @@ vec <- latticeRule$genVec
 
 #Simulate data
 Sigma <- exp(-as.matrix(dist(loc))^0.8)
-obs <- rExtremalStudentParetoProcess(n = 1000, nu = 2, Sigma = Sigma)
+obs <- rExtremalStudentParetoProcess(n = 1000, nu = 5, Sigma = Sigma)
 obs <- split(obs, row(obs))
 
 #Evaluate risk functional
 maxima <- sapply(obs, max)
-thres <- quantile(maxima, 0.9)
+thresh <- quantile(maxima, 0.9)
 
 #Select exceedances
-exceedances <- obs[maxima > thres]
+exceedances <- obs[maxima > thresh]
 
 #Compute log-likelihood function
-eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 2, rep(thres, nrow(loc)), primeP, vec)
+eval <- censoredLikelihoodXS(exceedances, loc, corrFun, nu = 5, u = thresh, primeP, vec)
 
 }
 \references{

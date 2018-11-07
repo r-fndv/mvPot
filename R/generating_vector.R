@@ -5,11 +5,12 @@
 #' The function computes a generating vector for efficient multivariate integral estimation
 #' based on D. Nuyens and R. Cools (2004). If \code{p} is not a prime, the nearest smaller prime is used instead.
 #'
-#' @param p number of samples to use in the quasi-Monte Carlo procedure. 
+#' @param p number of samples to use in the quasi-Monte Carlo procedure.
 #' @param d Dimension of the multivariate integral to estimate.
 #' @param bt Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
 #' @param gm Tuning parameter for finding the vector. See D. Nuyens and R. Cools (2004) for more details.
 #' @return \code{primeP}, the highest prime number smaller than \code{p} and \code{genVec}, a \code{d}-dimensional generating vector defining an efficient lattice rule for \code{primeP} samples.
+#' @references Nuyens, D. and R. Cools (2004). Fast component-by-component construction, a reprise for different kernels. In Monte Carlo and Quasi-Monte Carlo Methods 2004, H. Niederreiter and D. Talay, eds. Springer: Berlin, 373-87.
 #' @examples
 #' #Define the number of sample.
 #' p <- 500

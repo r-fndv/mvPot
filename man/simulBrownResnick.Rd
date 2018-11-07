@@ -45,3 +45,6 @@ loc <- expand.grid(1:4, 1:4)
 #Simulate data
 obs <- simulBrownResnick(10, loc, vario)
 }
+\references{
+Dombry, C., Engelke, S. and M. Oesting. Exact simulation of max-stable processes. Biometrika, 103(2), 303-317.
+}

@@ -8,7 +8,7 @@ scoreEstimation(obs, loc, vario, weightFun = NULL, dWeightFun = NULL,
   nCores = 1L, cl = NULL, ...)
 }
 \arguments{
-\item{obs}{List of vectors exceeding an R-threshold, see de Fondeville and Davison (2016) for more details.}
+\item{obs}{List of vectors exceeding an R-threshold, see de Fondeville and Davison (2018) for more details.}
 
 \item{loc}{Matrix of coordinates as given by \code{expand.grid()}.}
 
@@ -33,7 +33,7 @@ Compute the peaks-over-threshold gradient score function for the Brown--Resnick 
 \details{
 The function computes the gradient score based on the representation developed by Wadsworth et al. (2014).
 Margins must have been standardized. The weighting function must be differentiable and verify some properties
-for consistency, see de Fondeville and Davison (2016) for more details.
+for consistency, see de Fondeville and Davison (2018) for more details.
 }
 \examples{
 #Define variogram function
@@ -68,7 +68,10 @@ exceedances <- obs[sums > threshold]
 scoreEstimation(exceedances, loc, vario, weightFun = weightFun, dWeightFun, u = threshold)
 }
 \references{
-de Fondeville, R. and A. C. Davison (2017). High-dimensional Peaks-over-threshold Inference for Brown-Resnick Processes. Submitted.
+de Fondeville, R. and Davison A. (2018). High-dimensional peaks-over-threshold inference. Biometrika, 105(3), 575-592.
+
+Wadsworth, J. L. and J. A. Tawn (2014). Efficient inference for spatial extreme value
+ processes associated to log-Gaussian random functions. Biometrika, 101(1), 1-15.
 }
 \author{
 Raphael de Fondeville

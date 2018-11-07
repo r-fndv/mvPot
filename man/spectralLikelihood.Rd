@@ -18,13 +18,13 @@ spectralLikelihood(obs, loc, vario, nCores = 1L, cl = NULL)
 \item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
 }
 \value{
-Evaluation of the spectral likelihood function for the set of observations \code{obs} and semi-variogram \code{vario}.
+Negative spectral log-likelihood function evaluated at the set of observations \code{obs} with semi-variogram \code{vario}.
 }
 \description{
-Compute the spectral log-likelihood function for Brown--Resnick model with peaks-over-threshold.
+Compute the negative spectral log-likelihood function for Brown--Resnick model with peaks-over-threshold.
 }
 \details{
-The function compute the log-likelihood function based on the spectral representation developed
+The function compute the negative log-likelihood function based on the spectral representation developed
 by Engelke et al. (2015). This simplified expression is obtained by conditioning on the event
 `\code{sum(x)} exceeds a high threshold \code{u > 1}'. Margins must have been standardized.
 }
@@ -50,5 +50,5 @@ exceedances <- obs[sums > quantile(sums, 0.9)]
 spectralLikelihood(exceedances, loc, vario)
 }
 \references{
-Engelke, S. et al. (2015). Estimation of Huesler-Reiss Distributions and Brown-Resnick Processes. Journal of the Royal Statistical Society: Series B, 77(1):239-265
+Engelke, S. et al. (2015). Estimation of Huesler-Reiss distributions and Brown-Resnick processes. Journal of the Royal Statistical Society: Series B, 77(1), 239-265
 }

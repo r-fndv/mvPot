@@ -16,8 +16,7 @@ simulPareto(n, loc, vario, nCores = 1, cl = NULL)
 \item{nCores}{Number of cores used for the computation}
 
 \item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package. Make sure
-the random number generator has been properly initialized with
-\code{clusterSetRNGStream()}.}
+the random number generator has been properly initialized with \code{clusterSetRNGStream()}.}
 }
 \value{
 List of \code{n} random vectors drawn from a multivariate Pareto distribution with semi-variogram \code{vario}.
@@ -42,4 +41,7 @@ loc <- expand.grid(1:4, 1:4)
 
 #Simulate data
 obs <- simulPareto(100, loc, vario)
+}
+\references{
+Dombry, C., Engelke, S. and M. Oesting. Exact simulation of max-stable processes. Biometrika, 103(2), 303-317.
 }
