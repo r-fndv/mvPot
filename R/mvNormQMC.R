@@ -4,17 +4,20 @@
 #'
 #' The function uses a quasi-Monte Carlo procedure based on randomly shifted
 #' lattice rules to estimate the distribution function a multivariate normal distribution
-#' as described in Genz, A. and Bretz, F.(2009).
+#' as described in Genz and Bretz (2009) on page 50.
 #'
 #' @param p Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.
 #' @param upperBound Vector of probabilities, i.e., the upper bound of the integral.
 #' @param cov Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 #' WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
 #' that the matrix is positive semi-definite.
+#' @param nrep number of Monte-Carlo replications over which to average calculations. Default to 10.
+#' @param antithetic logical; should antithetic variables be used (in which case sample size is \code{2p}).
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 #' @references Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
-#' @return An estimate of the distribution function along with empirical Monte Carlo error.
+#' @return A named vector with components estimate \code{estimate} of the distribution function 
+#' along \code{error}, 3 times the empirical Monte Carlo standard error over the \code{nrep} replications.
 #' @examples
 #'
 #' #Define locations
@@ -41,7 +44,7 @@
 #' mvtNormQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, latticeRule$genVec)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
-mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
+mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec, nrep = 10L, antithetic = FALSE){
   if(missing(p) && missing(genVec)){
     p <- 499L
     genVec <- genVecQMC(p, nrow(cov))$genVec
@@ -71,10 +74,18 @@ mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec){
            as.double(cov),
            as.double(upperBound),
            as.double(genVec),
+           as.integer(nrep),
+           as.integer(antithetic),
            est = double(length=1),
            err = double(length=1),
            PACKAGE = "mvPot"
   )
 
   c(estimate = tmp$est, error = tmp$err)
+}
+
+
+
+.onUnload <- function (libpath) {
+  library.dynam.unload("mvPot", libpath)
 }
