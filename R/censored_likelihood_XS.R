@@ -17,14 +17,15 @@
 #' @param nu degrees of freedom of the Student process
 #' @param nCores Number of cores used for the computation
 #' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @param likelihood string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
+#' @param likelihood vector of string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
 #'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
 #' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
 #' @param std logical; if \code{std = TRUE}, consider \code{obs/u} for scalar u and exceedances over 1 rather than \code{obs} \eqn{>} \code{u} for potentially vector \code{u}. This affects the value of the log-likelihood function. Default to \code{FALSE}.
+#' @param nrep number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
 #' @references Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 #' @references Ribatet, M. (2013). Spatial extremes: max-stable processes at work. JSFS, 154(2), 156-177.
 #' @author Leo Belzile
-#' @return Negative censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}, with \code{attributes}  \code{exponentMeasure}.
+#' @return Negative censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}, with \code{attributes}  \code{exponentMeasure} for all of the \code{likelihood} type selected, in the order \code{"mgp"}, \code{"poisson"}, \code{"binom"}..
 #' @examples
 #' #Define correlation function
 #' corrFun <- function(h, alpha = 1, lambda = 1){
@@ -57,21 +58,23 @@
 #' 
 #' @export
 censoredLikelihoodXS = function(obs,
-                              loc,
-                              corrFun,
-                              nu,
-                              u,
-                              p = 499L,
-                              vec = NULL,
-                              nCores = 1L,
-                              cl = NULL,
-                              likelihood = c("mgp", "poisson","binom"), 
-                              ntot = length(obs),
-                              std = FALSE){
-  likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"))[1]
+                                loc,
+                                corrFun,
+                                nu,
+                                u,
+                                p = 499L,
+                                vec = NULL,
+                                nCores = 1L,
+                                cl = NULL,
+                                likelihood = "mgp", 
+                                ntot = NULL,
+                                std = FALSE,
+                                nrep = 10L){
+  likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"), several.ok = TRUE)
+  whichlik <- c("mgp", "poisson","binom") %in% likelihood
   #Duplicate threshold vector if too short
   if(std && length(u) > 1L){
-   warning("Invalid threshold `u`: must be univariate. Switching to `std = FALSE`")
+    warning("Invalid threshold `u`: must be univariate. Switching to `std = FALSE`")
     std <- FALSE
   }
   if(length(u) == 1L){
@@ -113,9 +116,9 @@ censoredLikelihoodXS = function(obs,
   }
   n <- length(obs)
   D <- nrow(loc)
-   if((D - 1) > length(vec)){
-     stop("Prime number and generating vector must be bigger than the dimension.")
-   }
+  if((D - 1) > length(vec)){
+    stop("Prime number and generating vector must be bigger than the dimension.")
+  }
   if(D != length(obs[[1]])){
     stop('The size of the vectors of observations does not match grid size.')
   }
@@ -134,12 +137,12 @@ censoredLikelihoodXS = function(obs,
   if(nCores > 1 && length(grep("cluster", class(cl))) == 0) {
     stop('For parallel computation, `cl` must an cluster created by `makeCluster` of the package parallel.')
   }
-
+  
   Sigma <- tryCatch({
     dists <- lapply(1:ncol(loc), function(i) {
       outer(loc[, i], loc[, i], "-")
     })
-
+    
     computeCorrMat <- sapply(1:length(dists[[1]]), function(i){
       h <- rep(0, ncol(loc))
       for(j in 1:ncol(loc)){
@@ -161,12 +164,13 @@ censoredLikelihoodXS = function(obs,
       stop("The correlation function provided by the user does not generate a positive definite matrix.")
     }
   }
+  
    mleEst = function(i){
-     #print(i)
+    #print(i)
     if(i < (D + 1)) {
       #Computation for the exponent measure
       #With std == TRUE, all u are the same components, so we get zero
-      upperBound <- switch(std + 1L, exp((log(u[-i]) - log(u[i])) / nu) - Sigma[-i, i], 1- Sigma[-i,i])
+      upperBound <- switch(std + 1L, exp((log(u[-i]) - log(u[i])) / nu) - Sigma[-i, i], 1- Sigma[-i, i])
       cov <- (Sigma[-i, -i] - Sigma[-i, i, drop = FALSE] %*% Sigma[i, -i, drop = FALSE]) / (nu + 1)
       # return(mvTProbQuasiMonteCarlo(p = p, upperBound = upperBound, cov = cov, nu = nu, genVec = vec [1:length(upperBound)])[1])
       # return(TruncatedNormal::mvTcdf(l = rep(-Inf, length(upperBound)), u = upperBound, Sig = cov, df = nu, n = 1e4)$prob)
@@ -177,30 +181,29 @@ censoredLikelihoodXS = function(obs,
                as.double(upperBound),
                as.double(nu + 1),
                as.double(vec[1:length(upperBound)]),
+               as.integer(nrep),
+               as.integer(FALSE),
                est = double(length=1),
                err = double(length=1),
                PACKAGE = "mvPot"
       )
       return(tmp$est)
-
+      
     } else {
       j = i - D
       if(std){
-       observation <-   .subset2(obs, j) / u
-       posUnder <- which(observation <= 1)
-       posAbove <- which(observation > 1)
+        observation <- .subset2(obs, j) / u
+        posUnder <- which(observation <= 1)
+        posAbove <- which(observation > 1)
       } else{
-      observation <- .subset2(obs, j)
-      posUnder <- which(observation <= u)
-      posAbove <- which(observation > u)
+        observation <- .subset2(obs, j)
+        posUnder <- which(observation <= u)
+        posAbove <- which(observation > u)
       }
-      # if(censored){
-      #   observation <- pmax(observation, u)
-      # }
       #Computation of the density function
       k <- D - length(posUnder) #number of points above threshold
       if(k == 0){
-       stop("Invalid input. The list `obs` must contain vectors with at least one exceedance!") 
+        stop("Invalid input. The list `obs` must contain vectors with at least one exceedance!") 
       }
       #Multivariate log normal density for uncensored
       if(k > 1){
@@ -209,26 +212,26 @@ censoredLikelihoodXS = function(obs,
         SigmaUncensInv <- solve.qr(qrSigma) #chol2inv(cholSigma)
         logdetSigma <- sum(log(abs(diag(qrSigma$qr)))) #sum(2*log(diag(chol(Sigma))))
         quad <- c(t(observation[posAbove]^(1/nu)) %*% SigmaUncensInv %*% (observation[posAbove]^(1/nu)))
-      nll1 <-  - ((1 - k) * log(nu) + ((1 - k) / 2) * log(pi) - 0.5 * logdetSigma + lgamma((nu + k) / 2) - lgamma((nu + 1) / 2) +
-          (1 / nu - 1) * sum(log(observation[posAbove])) + (- (k + nu) / 2) * log(quad))
+        nll1 <-  - ((1 - k) * log(nu) + ((1 - k) / 2) * log(pi) - 0.5 * logdetSigma + lgamma((nu + k) / 2) - lgamma((nu + 1) / 2) +
+                      (1 / nu - 1) * sum(log(observation[posAbove])) + (- (k + nu) / 2) * log(quad))
       } else {
         #One exceedance only -> parameters have no impact
         nll1 <- 2 * log(observation[posAbove])
         quad <- observation[posAbove]^(2/nu)
       }
-
+      
       if(k < D){
         #If there are censored components
         if(k > 1) {
           muC = c(Sigma[posUnder, posAbove, drop = FALSE] %*% SigmaUncensInv %*% observation[posAbove]^(1/nu))
           sigmaC = quad / (k + nu) * (Sigma[posUnder, posUnder, drop = FALSE] - Sigma[posUnder, posAbove, drop = FALSE] %*%
-                                          SigmaUncensInv %*% Sigma[posAbove, posUnder, drop = FALSE])
+                                        SigmaUncensInv %*% Sigma[posAbove, posUnder, drop = FALSE])
         } else { #k == 1
           muC = c(Sigma[posUnder, posAbove, drop = FALSE] %*% observation[posAbove]^(1/nu))
           sigmaC = quad / (k + nu) * (Sigma[posUnder, posUnder, drop = FALSE] - Sigma[posUnder, posAbove, drop = FALSE] %*%
                                         Sigma[posAbove, posUnder, drop = FALSE])
         }
-
+        
         if(k == (D - 1)){ #1-dimensional censored component, use pt rather than QMC
           #rather than take (observation[posUnder]^(1 / nu)-as.vector(muC)) / sqrt(sigmaC)
           tmp = switch(std + 1L, stats::pt((u[posUnder]^(1/nu) - as.vector(muC)) / sqrt(sigmaC[1]), df = nu + k),
@@ -236,27 +239,31 @@ censoredLikelihoodXS = function(obs,
           nll2 = - log(max(1e-323, tmp))
         } else {
           tmp <- switch(std + 1L, 
-                    .C(mvTProbCpp,
-                    as.integer(p),
-                    as.integer(length(muC)),
-                    as.double(sigmaC),
-                    as.double(u[posUnder]^(1/nu)-as.vector(muC)),
-                    as.double(nu + k),
-                    as.double(vec[1:length(muC)]),
-                    est = double(length=1),
-                    err = double(length=1),
-                    PACKAGE = "mvPot"
-          ), .C(mvTProbCpp,
-                as.integer(p),
-                as.integer(length(muC)),
-                as.double(sigmaC),
-                as.double(1-as.vector(muC)),
-                as.double(nu + k),
-                as.double(vec[1:length(muC)]),
-                est = double(length=1),
-                err = double(length=1),
-                PACKAGE = "mvPot"
-          ))
+                        .C(mvTProbCpp,
+                           as.integer(p),
+                           as.integer(length(muC)),
+                           as.double(sigmaC),
+                           as.double(u[posUnder]^(1/nu)-as.vector(muC)),
+                           as.double(nu + k),
+                           as.double(vec[1:length(muC)]),
+                           as.integer(nrep),
+                           as.integer(FALSE),
+                           est = double(length=1),
+                           err = double(length=1),
+                           PACKAGE = "mvPot"
+                        ), .C(mvTProbCpp,
+                              as.integer(p),
+                              as.integer(length(muC)),
+                              as.double(sigmaC),
+                              as.double(1-as.vector(muC)),
+                              as.double(nu + k),
+                              as.double(vec[1:length(muC)]),
+                              as.integer(nrep),
+                              as.integer(FALSE),
+                              est = double(length=1),
+                              err = double(length=1),
+                              PACKAGE = "mvPot"
+                        ))
           
           
           # tmp <- TruncatedNormal::mvTcdf(l = rep(-Inf, nrow(sigmaC)), u = u[posUnder]^(1/nu)-as.vector(muC),
@@ -274,7 +281,7 @@ censoredLikelihoodXS = function(obs,
       return(nll1 + nll2)
     }
   }
-
+  
   if(nCores > 1){
     # ------------ Parallel computation of the mle -------------------
     blockedMLE = function(i){
@@ -284,31 +291,25 @@ censoredLikelihoodXS = function(obs,
         lapply(blockStart:blockEnd, mleEst)
       }
     }
-
+    
     blockSize <- floor((D + n) / nCores) + 1
     pro <- parallel::parLapply(cl, 1:(nCores), blockedMLE)
   } else {
     pro <- lapply(1:(D + n), mleEst)
   }
-   
-   if(likelihood != "mgp" && ntot == n){
+  
+  if(any(whichlik[2:3]) && ntot == n){
     warning("Total number of observations currently same as number of exceedances.")
-   }
-   if(std){
-     exponentMeasureOne <- sum(unlist(pro)[1:D])
-     res <- switch(likelihood,
-                   mgp = n * log(exponentMeasureOne) + sum(unlist(pro)[(D + 1):(n + D)]),
-                   poisson =  (exponentMeasureOne / u[1]) + sum(unlist(pro)[(D + 1):(n + D)]),
-                   binom =  - (ntot - n) * log(1 - (exponentMeasureOne / u) / ntot) + sum(unlist(pro)[(D + 1):(n + D)])
-     )
-   } else{ #subtract, different thresholds
-     exponentMeasure <- sum(unlist(pro)[1:D]/u)
-     res <- switch(likelihood,
-                   mgp = n * log(exponentMeasure) + sum(unlist(pro)[(D + 1):(n + D)]),
-                   poisson = exponentMeasure + sum(unlist(pro)[(D + 1):(n + D)]),
-                   binom =  - (ntot - n) * log(1 - exponentMeasure / ntot) + sum(unlist(pro)[(D + 1):(n + D)])
-     )
-   }
-  attributes(res) <- list("ExponentMeasure" = sum(unlist(pro)[1:D]/u))
+  }
+  exponentMeasure <- sum(unlist(pro)[1:D]/u)
+  if(whichlik[3] && exponentMeasure > 1){
+    warning("Exponent measure is greater than 1.")
+  }
+   res <- sum(unlist(pro)[(D + 1):(n + D)]) + 
+     suppressWarnings(c(n * log(exponentMeasure), 
+                      -ntot * exponentMeasure, 
+                      (ntot - n) * log(1 - exponentMeasure)
+                      )[whichlik])
+   attributes(res) <- list("ExponentMeasure" = exponentMeasure, names = c("mgp", "poisson", "binom")[whichlik])
   return(res)
 }
