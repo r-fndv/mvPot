@@ -11,8 +11,7 @@
 #' @param cov Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 #' WARNING: for performance in high-dimensions, no check is performed on the matrix. It is the user responsibility to ensure
 #' that the matrix is positive semi-definite.
-#' @param nrep number of Monte-Carlo replications over which to average calculations. Default to 10.
-#' @param antithetic logical; should antithetic variables be used (in which case sample size is \code{2p}).
+#' @param ... Additional arguments passed to Cpp routine.
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 #' @references Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
@@ -44,7 +43,7 @@
 #' mvtNormQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, latticeRule$genVec)
 #' @export
 #' @useDynLib mvPot mvtNormCpp
-mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec, nrep = 10L, antithetic = FALSE){
+mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec, ...){
   if(missing(p) && missing(genVec)){
     p <- 499L
     genVec <- genVecQMC(p, nrow(cov))$genVec
@@ -67,6 +66,20 @@ mvtNormQuasiMonteCarlo = function(p, upperBound, cov, genVec, nrep = 10L, antith
 
   if(!is.numeric(genVec) | !is.vector(genVec) | length(upperBound) != length(genVec)){
     stop('genVec must be a numeric vector of the same size as upperBound')
+  }
+  ellipsis <- list(...)
+  if(!is.null(ellipsis$nrep)){
+    nrep <- as.integer(ellipsis$nrep)
+    #number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+  } else{ 
+    nrep <- 10L
+  }
+  if(!is.null(ellipsis$antithetic)){
+    antithetic <-  ellipsis$antithetic
+    #should antithetic variables be used (in which case sample size is \code{2p}).
+    stopifnot(is.logical(antithetic))
+  } else{
+    antithetic <- FALSE 
   }
   tmp <-.C(mvtNormCpp,
            as.integer(p),

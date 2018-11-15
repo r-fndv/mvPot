@@ -4,8 +4,7 @@
 \alias{mvTProbQuasiMonteCarlo}
 \title{Multivariate t distribution function}
 \usage{
-mvTProbQuasiMonteCarlo(p, upperBound, cov, nu, genVec, nrep = 10L,
-  antithetic = FALSE)
+mvTProbQuasiMonteCarlo(p, upperBound, cov, nu, genVec, ...)
 }
 \arguments{
 \item{p}{Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.}
@@ -19,9 +18,7 @@ WARNING: for performance in high-dimensions, no check is done to ensure positive
 
 \item{genVec}{Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.}
 
-\item{nrep}{number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.}
-
-\item{antithetic}{logical; should antithetic variables be used (in which case sample size is \code{2p}).}
+\item{...}{Additional arguments passed to Cpp routine.}
 }
 \value{
 A named vector with components estimate \code{estimate} of the distribution function 

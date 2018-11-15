@@ -4,8 +4,7 @@
 \alias{mvtNormQuasiMonteCarlo}
 \title{Multivariate normal distribution function}
 \usage{
-mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec, nrep = 10L,
-  antithetic = FALSE)
+mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec, ...)
 }
 \arguments{
 \item{p}{Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.}
@@ -18,9 +17,7 @@ that the matrix is positive semi-definite.}
 
 \item{genVec}{Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.}
 
-\item{nrep}{number of Monte-Carlo replications over which to average calculations. Default to 10.}
-
-\item{antithetic}{logical; should antithetic variables be used (in which case sample size is \code{2p}).}
+\item{...}{Additional arguments passed to Cpp routine.}
 }
 \value{
 A named vector with components estimate \code{estimate} of the distribution function 

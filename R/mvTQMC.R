@@ -13,10 +13,9 @@
 #' @param upperBound Vector of probabilities, i.e., the upper bound of the integral.
 #' @param cov Covariance matrix of the multivariate normal distribution. Must be positive semi-definite.
 #' WARNING: for performance in high-dimensions, no check is done to ensure positive-definiteness of the covariance matrix. It is the user responsibility to ensure that this property is verified.
-#' @param nrep number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
 #' @param nu Degrees of freedom of the t distribution.
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
-#' @param antithetic logical; should antithetic variables be used (in which case sample size is \code{2p}).
+#' @param ... Additional arguments passed to Cpp routine.
 #' @return A named vector with components estimate \code{estimate} of the distribution function 
 #' along \code{error}, 3 times the empirical Monte Carlo standard error over the \code{nrep} replications.
 #' @examples
@@ -51,8 +50,7 @@
 #' @useDynLib mvPot mvTProbCpp
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 #' @references Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
-mvTProbQuasiMonteCarlo <- function(p, upperBound, cov, nu, genVec, nrep = 10L, antithetic = FALSE){
-
+mvTProbQuasiMonteCarlo <- function(p, upperBound, cov, nu, genVec, ...){
   if(length(cov) == 1L){
     if(length(upperBound) != length(cov)){
       stop("Invalid argument for one-dimensional case")
@@ -87,7 +85,19 @@ mvTProbQuasiMonteCarlo <- function(p, upperBound, cov, nu, genVec, nrep = 10L, a
   if(!is.numeric(nu) | nu <= 0 | length(nu) > 1 ){
     stop('nu must be a positive number')
   }
-
+  ellipsis <- list(...)
+  if(!is.null(ellipsis$nrep)){
+    nrep <- as.integer(ellipsis$nrep)
+    #number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+  } else{ 
+    nrep <- 10L
+  }
+  if(!is.null(ellipsis$antithetic)){
+    antithetic <-  ellipsis$antithetic
+    stopifnot(is.logical(antithetic))
+  } else{
+    antithetic <- FALSE 
+  }
   tmp <-.C(mvTProbCpp,
           as.integer(p),
            as.integer(length(upperBound)),
