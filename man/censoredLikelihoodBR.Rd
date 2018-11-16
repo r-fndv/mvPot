@@ -6,8 +6,7 @@
 \title{Censored log-likelihood function for the Brown--Resnick model.}
 \usage{
 censoredLikelihoodBR(obs, loc, vario, u, p = 499L, vec = NULL,
-  nCores = 1L, cl = NULL, likelihood = "mgp", ntot = NULL,
-  nrep = 10L)
+  nCores = 1L, cl = NULL, likelihood = "mgp", ntot = NULL, ...)
 
 censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL,
   nCores = 1L, cl = NULL)
@@ -35,7 +34,7 @@ can be computed using \code{genVecQMC}.}
 
 \item{ntot}{integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood}
 
-\item{nrep}{number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.}
+\item{...}{Additional arguments passed to Cpp routine.}
 }
 \value{
 Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure} for all of the \code{likelihood} type selected, in the order \code{"mgp"}, \code{"poisson"}, \code{"binom"}.

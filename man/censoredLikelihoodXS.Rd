@@ -7,7 +7,7 @@
 \usage{
 censoredLikelihoodXS(obs, loc, corrFun, nu, u, p = 499L, vec = NULL,
   nCores = 1L, cl = NULL, likelihood = "mgp", ntot = NULL,
-  std = FALSE, nrep = 10L)
+  std = FALSE, ...)
 }
 \arguments{
 \item{obs}{List of vectors for which at least one component exceeds a high threshold.}
@@ -36,7 +36,7 @@ can be computed using \code{genVecQMC}.}
 
 \item{std}{logical; if \code{std = TRUE}, consider \code{obs/u} for scalar u and exceedances over 1 rather than \code{obs} \eqn{>} \code{u} for potentially vector \code{u}. This affects the value of the log-likelihood function. Default to \code{FALSE}.}
 
-\item{nrep}{number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.}
+\item{...}{Additional arguments passed to Cpp routine.}
 }
 \value{
 Negative censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}, with \code{attributes}  \code{exponentMeasure} for all of the \code{likelihood} type selected, in the order \code{"mgp"}, \code{"poisson"}, \code{"binom"}..

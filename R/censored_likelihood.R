@@ -19,7 +19,7 @@
 #' @param likelihood vector of strings specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto,
 #'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
 #' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
-#' @param nrep number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+#' @param ... Additional arguments passed to Cpp routine.
 #' @return Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure} for all of the \code{likelihood} type selected, in the order \code{"mgp"}, \code{"poisson"}, \code{"binom"}.
 #' @examples
 #' #Define semi-variogram function
@@ -66,7 +66,7 @@ censoredLikelihoodBR <- function(obs,
                               cl = NULL,
                               likelihood = "mgp",
                               ntot = NULL,
-                              nrep = 10L){
+                              ...){
   likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"), several.ok = TRUE)
   whichlik <- c("mgp", "poisson","binom") %in% likelihood
   #Default for total number of observations is length of list
@@ -131,7 +131,13 @@ censoredLikelihoodBR <- function(obs,
   if(nCores > 1 && length(grep("cluster", class(cl))) == 0) {
     stop('For parallel computation, `cl` must an cluster created by `makeCluster` of the package parallel.')
   }
-
+  ellipsis <- list(...)
+  if(!is.null(ellipsis$nrep)){
+    nrep <- as.integer(ellipsis$nrep)
+    #number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+  } else{ 
+    nrep <- 10L
+  }
   gamma <- tryCatch({
     dists <- lapply(1:ncol(loc), function(i) {
       outer(loc[, i], loc[, i], "-")

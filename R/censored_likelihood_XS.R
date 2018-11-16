@@ -21,7 +21,7 @@
 #'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
 #' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
 #' @param std logical; if \code{std = TRUE}, consider \code{obs/u} for scalar u and exceedances over 1 rather than \code{obs} \eqn{>} \code{u} for potentially vector \code{u}. This affects the value of the log-likelihood function. Default to \code{FALSE}.
-#' @param nrep number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+#' @param ... Additional arguments passed to Cpp routine.
 #' @references Thibaud, E. and T. Opitz (2015). Efficient inference and simulation for elliptical Pareto processes. Biometrika, 102(4), 855-870.
 #' @references Ribatet, M. (2013). Spatial extremes: max-stable processes at work. JSFS, 154(2), 156-177.
 #' @author Leo Belzile
@@ -69,7 +69,7 @@ censoredLikelihoodXS = function(obs,
                                 likelihood = "mgp", 
                                 ntot = NULL,
                                 std = FALSE,
-                                nrep = 10L){
+                                ...){
   likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"), several.ok = TRUE)
   whichlik <- c("mgp", "poisson","binom") %in% likelihood
   #Duplicate threshold vector if too short
@@ -137,7 +137,13 @@ censoredLikelihoodXS = function(obs,
   if(nCores > 1 && length(grep("cluster", class(cl))) == 0) {
     stop('For parallel computation, `cl` must an cluster created by `makeCluster` of the package parallel.')
   }
-  
+  ellipsis <- list(...)
+  if(!is.null(ellipsis$nrep)){
+    nrep <- as.integer(ellipsis$nrep)
+    #number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+  } else{ 
+    nrep <- 10L
+  }
   Sigma <- tryCatch({
     dists <- lapply(1:ncol(loc), function(i) {
       outer(loc[, i], loc[, i], "-")
