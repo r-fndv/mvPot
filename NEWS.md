@@ -1,5 +1,6 @@
 # mvPot 0.1.5
 
+* Exposed number of replications for integration
 * Fix to censoredLikelihoodXS for cases when likelihood != "mgp"
 * New option for censoredLikelihoodBR (matrix of data, Poisson and binomial likelihood)
 * Updated documentation

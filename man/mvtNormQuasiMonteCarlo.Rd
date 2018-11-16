@@ -4,7 +4,7 @@
 \alias{mvtNormQuasiMonteCarlo}
 \title{Multivariate normal distribution function}
 \usage{
-mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec)
+mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec, ...)
 }
 \arguments{
 \item{p}{Number of samples used for quasi-Monte Carlo estimation. Must be a prime number.}
@@ -16,9 +16,12 @@ WARNING: for performance in high-dimensions, no check is performed on the matrix
 that the matrix is positive semi-definite.}
 
 \item{genVec}{Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.}
+
+\item{...}{Additional arguments passed to Cpp routine.}
 }
 \value{
-An estimate of the distribution function along with empirical Monte Carlo error.
+A named vector with components estimate \code{estimate} of the distribution function 
+along \code{error}, 3 times the empirical Monte Carlo standard error over the \code{nrep} replications.
 }
 \description{
 Estimate the multivariate distribution function with quasi-Monte Carlo method.
@@ -26,7 +29,7 @@ Estimate the multivariate distribution function with quasi-Monte Carlo method.
 \details{
 The function uses a quasi-Monte Carlo procedure based on randomly shifted
 lattice rules to estimate the distribution function a multivariate normal distribution
-as described in Genz, A. and Bretz, F.(2009).
+as described in Genz and Bretz (2009) on page 50.
 }
 \examples{
 

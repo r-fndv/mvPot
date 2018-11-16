@@ -6,8 +6,7 @@
 \title{Censored log-likelihood function for the Brown--Resnick model.}
 \usage{
 censoredLikelihoodBR(obs, loc, vario, u, p = 499L, vec = NULL,
-  nCores = 1L, cl = NULL, likelihood = c("mgp", "poisson", "binom"),
-  ntot = length(obs))
+  nCores = 1L, cl = NULL, likelihood = "mgp", ntot = NULL, ...)
 
 censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL,
   nCores = 1L, cl = NULL)
@@ -30,13 +29,15 @@ can be computed using \code{genVecQMC}.}
 
 \item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
 
-\item{likelihood}{string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto,
+\item{likelihood}{vector of strings specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto,
 \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.}
 
 \item{ntot}{integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood}
+
+\item{...}{Additional arguments passed to Cpp routine.}
 }
 \value{
-Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure}.
+Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure} for all of the \code{likelihood} type selected, in the order \code{"mgp"}, \code{"poisson"}, \code{"binom"}.
 }
 \description{
 Compute the peaks-over-threshold censored negative log-likelihood function for the Brown--Resnick model.

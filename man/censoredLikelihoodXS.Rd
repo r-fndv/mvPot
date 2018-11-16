@@ -6,8 +6,8 @@
 \title{Censored log-likelihood function of the extremal Student model}
 \usage{
 censoredLikelihoodXS(obs, loc, corrFun, nu, u, p = 499L, vec = NULL,
-  nCores = 1L, cl = NULL, likelihood = c("mgp", "poisson", "binom"),
-  ntot = length(obs), std = FALSE)
+  nCores = 1L, cl = NULL, likelihood = "mgp", ntot = NULL,
+  std = FALSE, ...)
 }
 \arguments{
 \item{obs}{List of vectors for which at least one component exceeds a high threshold.}
@@ -29,15 +29,17 @@ can be computed using \code{genVecQMC}.}
 
 \item{cl}{Cluster instance as created by \code{makeCluster} of the \code{parallel} package.}
 
-\item{likelihood}{string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
+\item{likelihood}{vector of string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto, 
 \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.}
 
 \item{ntot}{integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood}
 
 \item{std}{logical; if \code{std = TRUE}, consider \code{obs/u} for scalar u and exceedances over 1 rather than \code{obs} \eqn{>} \code{u} for potentially vector \code{u}. This affects the value of the log-likelihood function. Default to \code{FALSE}.}
+
+\item{...}{Additional arguments passed to Cpp routine.}
 }
 \value{
-Negative censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}, with \code{attributes}  \code{exponentMeasure}.
+Negative censored log-likelihood function for the set of observations \code{obs} and correlation function \code{corrFun}, with \code{attributes}  \code{exponentMeasure} for all of the \code{likelihood} type selected, in the order \code{"mgp"}, \code{"poisson"}, \code{"binom"}..
 }
 \description{
 Compute the peaks-over-threshold censored negative log-likelihood function for the extremal Student model.

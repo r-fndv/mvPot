@@ -4,7 +4,7 @@
 #'
 #' The function uses a quasi-Monte Carlo procedure based on randomly shifted
 #' lattice rules to estimate the distribution function a multivariate normal distribution
-#' as described in Genz, A. and Bretz, F.(2009).
+#' as described in Genz and Bretz (2009) on page 50.
 #'
 #' For compatibility reasons, the function handles the univariate case, which is passed on to \code{pt}.
 #'
@@ -15,7 +15,9 @@
 #' WARNING: for performance in high-dimensions, no check is done to ensure positive-definiteness of the covariance matrix. It is the user responsibility to ensure that this property is verified.
 #' @param nu Degrees of freedom of the t distribution.
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
-#' @return An estimate of the distribution function along with empirical Monte Carlo error.
+#' @param ... Additional arguments passed to Cpp routine.
+#' @return A named vector with components estimate \code{estimate} of the distribution function 
+#' along \code{error}, 3 times the empirical Monte Carlo standard error over the \code{nrep} replications.
 #' @examples
 #'
 #' #Define locations
@@ -48,9 +50,7 @@
 #' @useDynLib mvPot mvTProbCpp
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 #' @references Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
-
-mvTProbQuasiMonteCarlo = function(p, upperBound, cov, nu, genVec){
-
+mvTProbQuasiMonteCarlo <- function(p, upperBound, cov, nu, genVec, ...){
   if(length(cov) == 1L){
     if(length(upperBound) != length(cov)){
       stop("Invalid argument for one-dimensional case")
@@ -85,14 +85,28 @@ mvTProbQuasiMonteCarlo = function(p, upperBound, cov, nu, genVec){
   if(!is.numeric(nu) | nu <= 0 | length(nu) > 1 ){
     stop('nu must be a positive number')
   }
-
+  ellipsis <- list(...)
+  if(!is.null(ellipsis$nrep)){
+    nrep <- as.integer(ellipsis$nrep)
+    #number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+  } else{ 
+    nrep <- 10L
+  }
+  if(!is.null(ellipsis$antithetic)){
+    antithetic <-  ellipsis$antithetic
+    stopifnot(is.logical(antithetic))
+  } else{
+    antithetic <- FALSE 
+  }
   tmp <-.C(mvTProbCpp,
-           as.integer(p),
+          as.integer(p),
            as.integer(length(upperBound)),
            as.double(cov),
            as.double(upperBound),
            as.double(nu),
            as.double(genVec),
+           as.integer(nrep),
+           as.integer(antithetic),
            est = double(length=1),
            err = double(length=1),
            PACKAGE = "mvPot"

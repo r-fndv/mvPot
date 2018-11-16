@@ -16,10 +16,11 @@
 #' can be computed using \code{genVecQMC}.
 #' @param nCores Number of cores used for the computation
 #' @param cl Cluster instance as created by \code{makeCluster} of the \code{parallel} package.
-#' @param likelihood string specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto,
+#' @param likelihood vector of strings specifying the contribution. Either \code{"mgp"} for multivariate generalized Pareto,
 #'  \code{"poisson"} for a Poisson contribution for the observations falling below or \code{"binom"} for a binomial contribution.
 #' @param ntot integer number of observations below and above the threshold, to be used with Poisson or binomial likelihood
-#' @return Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure}.
+#' @param ... Additional arguments passed to Cpp routine.
+#' @return Negative censored log-likelihood for the set of observations \code{obs} and semi-variogram \code{vario} with \code{attributes}  \code{exponentMeasure} for all of the \code{likelihood} type selected, in the order \code{"mgp"}, \code{"poisson"}, \code{"binom"}.
 #' @examples
 #' #Define semi-variogram function
 #' vario <- function(h){
@@ -63,10 +64,11 @@ censoredLikelihoodBR <- function(obs,
                               vec = NULL,
                               nCores = 1L,
                               cl = NULL,
-                              likelihood = c("mgp", "poisson","binom"),
-                              ntot = length(obs)){
-
-  likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"))[1]
+                              likelihood = "mgp",
+                              ntot = NULL,
+                              ...){
+  likelihood <- match.arg(likelihood, choices = c("mgp", "poisson","binom"), several.ok = TRUE)
+  whichlik <- c("mgp", "poisson","binom") %in% likelihood
   #Default for total number of observations is length of list
   if(is.null(ntot) && is.list(obs)){
     ntot <- length(obs)
@@ -105,7 +107,7 @@ censoredLikelihoodBR <- function(obs,
     u <- rep(u, nrow(loc))
   } else{
    if(abs(max(u) - min(u)) >  1e-10){
-     stop("The threshold vector `u` must be the replicate of a scalar. Differing components not currently handled")
+     warning("The threshold level on the unit Frechet scale in vector `u` should be the same for all components!")
   }
   }
   n <- length(obs)
@@ -115,7 +117,7 @@ censoredLikelihoodBR <- function(obs,
     stop('The size of the vectors of observations does not match grid size.')
   }
   if(!is.numeric(u)  || length(u) != D) {
-    stop('`u` must be a vector with a length equal to the number of location.')
+    stop('`u` must be a vector whose length is equal to the number of location.')
   }
   if(!is.numeric(p)) {
     stop('`p` must be a numeric.')
@@ -129,7 +131,13 @@ censoredLikelihoodBR <- function(obs,
   if(nCores > 1 && length(grep("cluster", class(cl))) == 0) {
     stop('For parallel computation, `cl` must an cluster created by `makeCluster` of the package parallel.')
   }
-
+  ellipsis <- list(...)
+  if(!is.null(ellipsis$nrep)){
+    nrep <- as.integer(ellipsis$nrep)
+    #number of Monte-Carlo replications over which to average calculations to estimate error. Default to 10.
+  } else{ 
+    nrep <- 10L
+  }
   gamma <- tryCatch({
     dists <- lapply(1:ncol(loc), function(i) {
       outer(loc[, i], loc[, i], "-")
@@ -165,6 +173,8 @@ censoredLikelihoodBR <- function(obs,
                as.double(cov),
                as.double(upperBound),
                as.double(vec[1:length(upperBound)]),
+               as.integer(nrep),
+               as.integer(FALSE),
                est = double(length=1),
                err = double(length=1),
                PACKAGE = "mvPot"
@@ -221,6 +231,8 @@ censoredLikelihoodBR <- function(obs,
                     as.double(sigmaC),
                     as.double(as.vector(muC)),
                     as.double(vec[1:length(muC)]),
+                    as.integer(nrep),
+                    as.integer(FALSE),
                     est = double(length=1),
                     err = double(length=1),
                     PACKAGE = "mvPot"
@@ -253,16 +265,19 @@ censoredLikelihoodBR <- function(obs,
   } else {
     pro <- lapply(1:(D + n), mleEst)
   }
-  exponentMeasure <- sum(unlist(pro)[1:D])
-  if(likelihood != "mgp" && ntot == n){
+  exponentMeasure <- sum(unlist(pro)[1:D] / u)
+  if(any(whichlik[2:3]) && ntot == n){
     warning("Total number of observations currently same as number of exceedances.")
   }
-  res <- switch(likelihood, #This is NEGATIVE log -likelihood, components (D+1):(n+D) are already negated
-                mgp = n * log(exponentMeasure) + sum(unlist(pro)[(D + 1):(n + D)]),
-                poisson =  sum(unlist(pro)[1:D] / u) + sum(unlist(pro)[(D + 1):(n + D)]),
-                binom =  n * (log(u[1]) + log(ntot)) - (ntot - n) * log(1 - sum(unlist(pro)[1:D] / u) / ntot) + sum(unlist(pro)[(D + 1):(n + D)])
-  ) #TODO check what to put for Poisson (ntot or no component there)
-  attributes(res) <- list("ExponentMeasure" = sum(unlist(pro)[1:D] / u))
+  if(whichlik[3] && exponentMeasure > 1){
+    warning("Exponent measure is greater than 1.")
+  }
+  res <- sum(unlist(pro)[(D + 1):(n + D)]) + 
+    suppressWarnings(c(n * log(exponentMeasure), 
+                       -ntot * exponentMeasure, 
+                       (ntot - n) * log(1 - exponentMeasure)
+                       )[whichlik])
+  attributes(res) <- list("ExponentMeasure" = exponentMeasure, names = c("mgp", "poisson", "binom")[whichlik])
   return(res)
 }
 

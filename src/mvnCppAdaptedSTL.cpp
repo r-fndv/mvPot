@@ -1,9 +1,21 @@
 #include <R.h>
+#include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 #include <Rmath.h>
 #include <vector>
 #include <complex>
 #include <limits>
+
+
+
+static void chkIntFn(void *dummy) {
+  R_CheckUserInterrupt();
+}
+
+// this will call the above in a top-level context so it won't longjmp-out of your context
+bool checkInterrupt() {
+  return (R_ToplevelExec(chkIntFn, NULL) == FALSE);
+}
 
 double stdnormal_inv(double p)
 {
@@ -116,7 +128,90 @@ void pointEstimate(int j,
 }
 
 
-extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp_b, double *tmp_generatingVector, double *est, double *err) {
+void pointEstimateAT(int j,
+                     int *d,
+                     const double *generatingVector,
+                     const double *randomShift,
+                     const double *b,
+                     const double *L,
+                     double *est)
+{   
+  double value1 = 0;
+  double value2 = 0;
+  double* x1;
+  x1 = (double*) Calloc(*d, double);
+  double* x2;
+  x2 = (double*) Calloc(*d, double);
+  
+  for (int k = 0; k < *d; k++) {
+    x1[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
+    x2[k] = 1 - x1[k];
+  }
+  
+  double* e1;
+  e1 = (double*) Calloc(*d, double);
+  double* y1;
+  y1 = (double*) Calloc(*d, double);
+  
+  double* e2;
+  e2 = (double*) Calloc(*d, double);
+  double* y2;
+  y2 = (double*) Calloc(*d, double);
+  
+  //e[0] = 0.5 + 0.5 * erf_R((b)[0] / ((L)[0]*sqrt(2.0)));
+  e1[0] = pnorm(((b)[0] / (L)[0]), 0, 1, 1, 0);
+  value1 = e1[0] ;
+  e2[0] =  e1[0] ;
+  value2 = e2[0];
+  
+  for (int k = 1; k < *d; k++) {
+    
+    y1[k-1] = stdnormal_inv(e1[k - 1] * x1[k - 1]);
+    y2[k-1] = stdnormal_inv(e2[k - 1] * x2[k - 1]);
+    //DEAL WITH INFINTE BOUNDS
+    if(!(R_FINITE(y1[k-1]))) {
+      if(y1[k-1] > 0){
+        value1 = 1;
+      } else {
+        value1 = 0;
+      }
+      break;
+    }
+    if(!(R_FINITE(y2[k-1]))) {
+      if(y2[k-1] > 0){
+        value2 = 1;
+      } else {
+        value2 = 0;
+      }
+      break;
+    }
+    double tmp1 = 0;
+    double tmp2 = 0;
+    for (int l = 0; l < k; l++){
+      tmp1 += (L)[k * (*d) + l] * y1[l];
+      tmp2 += (L)[k * (*d) + l] * y2[l];
+    }
+    
+    //e[k] = 0.5 + 0.5 * erf_R(((b)[k] - tmp) / ((L)[k * (*d) + k] * sqrt(2.0)));
+    e1[k] = pnorm(((b)[k] - tmp1) / ((L)[k * (*d) + k]), 0, 1, 1, 0);
+    e2[k] = pnorm(((b)[k] - tmp2) / ((L)[k * (*d) + k]), 0, 1, 1, 0);
+    value1 = value1 * e1[k];
+    value2 = value2 * e2[k];
+    
+  }
+  *est += value1;
+  *est += value2;
+  
+  Free(x1);
+  Free(e1);
+  Free(y1);
+  Free(x2);
+  Free(e2);
+  Free(y2);
+}
+
+extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp_b, double *tmp_generatingVector, 
+                          int *tmp_nrep, int *antithetic, double *est, double *err) {
 
     //double diff = 0, p = 0, error = 0;
     //double pi = 3.141592653589793;
@@ -152,7 +247,7 @@ extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
     double min = LONG_MAX;
 
     //PARAMETERS FOR INTEGRATION
-    int nRep = 10;
+    // int nRep = 10;
     double diff = 0, p = 0, error = 0;
 
 
@@ -246,26 +341,32 @@ extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
 
     int *h_d = tmp_d;
     double *h_generatingVector = tmp_generatingVector, *h_randomShift = (double*) R_alloc(*tmp_d, sizeof(double)), *h_b = &b[0], *h_L =&vecL[0], *h_est = est;
-
+    
     GetRNGstate();
 
-    for (int i = 0; i < nRep; i++) {
+    for (int i = 0; i < *tmp_nrep; i++) {
 
 
-        for (int k = 0; k < *tmp_d; k++){
-            //h_randomShift[k] = ((double) rand() / (RAND_MAX));
-            h_randomShift[k] = unif_rand();
-        }
-        *h_est = 0;
-
-        for (int j = 0; j < *tmp_xn; j++) {
-            pointEstimate(j, h_d, h_generatingVector, h_randomShift, h_b, h_L, h_est);
+          for (int k = 0; k < *tmp_d; k++){
+              //h_randomShift[k] = ((double) rand() / (RAND_MAX));
+              h_randomShift[k] = unif_rand();
+          }
+          *h_est = 0;
+          if(*antithetic == 1){
+           for (int j = 0; j < *tmp_xn; j++) {
+              pointEstimateAT(j, h_d, h_generatingVector, h_randomShift, h_b, h_L, est);
             }
-        diff = ((*h_est / *tmp_xn) - p) / (i + 1);
-        p += diff;
-        error = ( i - 1 ) * error / (i + 1) + pow(diff,2);
-
-         }
+           diff = ((*h_est / (2* *tmp_xn)) - p) / (i + 1);
+          } else{
+            for (int j = 0; j < *tmp_xn; j++) {
+              pointEstimate(j, h_d, h_generatingVector, h_randomShift, h_b, h_L, h_est);
+            }
+            diff = ((*h_est / *tmp_xn) - p) / (i + 1);
+          }
+            p += diff;
+            error = ( i - 1 ) * error / (i + 1) + pow(diff,2);
+            if (checkInterrupt())  break;
+        }
 
     PutRNGstate();
 
@@ -345,9 +446,110 @@ void pointEstimateTProb(int j,
     Free(b);
 }
 
+void pointEstimateTProbAT(int j,
+                        int *d,
+                        const double *generatingVector,
+                        const double *randomShift,
+                        const double *b_org,
+                        const double *L,
+                        double *est,
+                        double *nu)
+{   
+  double value1 = 0;
+  double value2 = 0;
+  double* x1;
+  double* x2;
+  x1 = (double*) Calloc(*d, double);
+  x2 = (double*) Calloc(*d, double);
+  
+  for (int k = 0; k < *d; k++) {
+    x1[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
+    x2[k] = 1 - x1[k];
+  }
+  
+  double* e1;
+  e1 = (double*) Calloc(*d, double);
+  double* y1;
+  y1 = (double*) Calloc(*d, double);
+  double* b1;
+  b1 = (double*) Calloc(*d, double);
+  double* e2;
+  e2 = (double*) Calloc(*d, double);
+  double* y2;
+  y2 = (double*) Calloc(*d, double);
+  double* b2;
+  b2 = (double*) Calloc(*d, double);
+  double scaling1 = 0;
+  double scaling2 = 0;
+  
+  scaling1 = sqrt(2 * qgamma(x1[*d - 1], *nu / 2, 1, 1, 0));
+  scaling2 = sqrt(2 * qgamma(x2[*d - 1], *nu / 2, 1, 1, 0));
+  
+  b1[0] = scaling1 * b_org[0];
+  b2[0] = scaling2 * b_org[0];
+  //b[0] = b_org[0];
+  
+  //e[0] = 0.5 + 0.5 * erf_R((b)[0] / ((L)[0]*sqrt(2.0)));
+  e1[0] = pnorm(((b1)[0] / (L)[0]), 0, 1, 1, 0);
+  e2[0] = pnorm(((b2)[0] / (L)[0]), 0, 1, 1, 0);
+  value1 = e1[0];
+  value2 = e2[0];
+  
+  for (int k = 1; k < *d; k++) {
+    
+    b1[k] = scaling1 * b_org[k];
+    b2[k] = scaling2 * b_org[k];
+    //b[k] = b_org[k];
+    
+    y1[k-1] = stdnormal_inv(e1[k - 1] * x1[k - 1]);
+    y2[k-1] = stdnormal_inv(e2[k - 1] * x2[k - 1]);
+    
+    //DEAL WITH INFINITE BOUNDS
+    if(!(R_FINITE(y1[k-1]))) {
+      if(y1[k-1] > 0){
+        value1 = 1;
+      } else {
+        value1 = 0;
+      }
+      break;
+    }
+    if(!(R_FINITE(y2[k-1]))) {
+      if(y2[k-1] > 0){
+        value2 = 1;
+      } else {
+        value2 = 0;
+      }
+      break;
+    }
+    double tmp1 = 0;
+    double tmp2 = 0;
+    for (int l = 0; l < k; l++){
+      tmp1 += (L)[k * (*d) + l] * y1[l];
+      tmp2 += (L)[k * (*d) + l] * y2[l];
+    }
+    
+    //e[k] = 0.5 + 0.5 * erf_R(((b)[k] - tmp) / ((L)[k * (*d) + k] * sqrt(2.0)));
+    e1[k] = pnorm(((b1)[k] - tmp1) / ((L)[k * (*d) + k]), 0, 1, 1, 0);
+    e2[k] = pnorm(((b2)[k] - tmp2) / ((L)[k * (*d) + k]), 0, 1, 1, 0);
+    value1 = value1 * e1[k];
+    value2 = value2 * e2[k];
+    
+  }
+  *est += value1;
+  *est += value2;
+  
+  Free(x1);
+  Free(e1);
+  Free(y1);
+  Free(b1);
+  Free(x2);
+  Free(e2);
+  Free(y2);
+  Free(b2);
+}
 
-
-extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp_b, double *nu, double *tmp_generatingVector, double *est, double *err) {
+extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d,  double *tmp_mat, double *tmp_b, double *nu, 
+                          double *tmp_generatingVector, int *tmp_nrep, int *antithetic, double *est, double *err) {
 
     //double diff = 0, p = 0, error = 0;
     //double pi = 3.141592653589793;
@@ -383,7 +585,6 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
     double min = LONG_MAX;
 
     //PARAMETERS FOR INTEGRATION
-    int nRep = 10;
     double diff = 0, p = 0, error = 0;
 
 
@@ -480,21 +681,27 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
 
     GetRNGstate();
 
-    for (int i = 0; i < nRep; i++) {
+    for (int i = 0; i < *tmp_nrep; i++) {
 
         for (int k = 0; k < *tmp_d; k++){
             //h_randomShift[k] = ((double) rand() / (RAND_MAX));
             h_randomShift[k] = unif_rand();
         }
         *h_est = 0;
-
+        if(*antithetic == 1){
+          for (int j = 0; j < *tmp_xn; j++) {
+            pointEstimateTProbAT(j, h_d, h_generatingVector, h_randomShift, h_b, h_L, h_est, h_nu);
+          }
+          diff = ((*h_est / (2* *tmp_xn)) - p) / (i + 1);
+        } else{
         for (int j = 0; j < *tmp_xn; j++) {
             pointEstimateTProb(j, h_d, h_generatingVector, h_randomShift, h_b, h_L, h_est, h_nu);
         }
         diff = ((*h_est / *tmp_xn) - p) / (i + 1);
+        }
         p += diff;
         error = ( i - 1 ) * error / (i + 1) + pow(diff,2);
-
+        if (checkInterrupt())  break;
     }
 
     PutRNGstate();
@@ -506,14 +713,10 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
     *err = error;
 }
 
-/* Registration of the method
- static R_NativePrimitiveArgType mvtNormCpp_t[] = {
- INTSXP, INTSXP, REALSXP, REALSXP, REALSXP, REALSXP, REALSXP
- };*/
 
 static const R_CMethodDef cMethods[] = {
-    {"mvtNormCpp", (DL_FUNC) &mvtNormCpp, 7},
-    {"mvTProbCpp", (DL_FUNC) &mvTProbCpp, 8},
+    {"mvtNormCpp", (DL_FUNC) &mvtNormCpp, 9},
+    {"mvTProbCpp", (DL_FUNC) &mvTProbCpp, 10},
     {NULL, NULL, 0}
 };
 
