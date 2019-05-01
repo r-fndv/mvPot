@@ -206,7 +206,7 @@ censoredLikelihoodBR <- function(obs,
         logdetA = determinant(sigma[posAboveShifted, posAboveShifted, drop = FALSE], logarithm = TRUE)$modulus
         omega <- log(observation[posAbove][-1]/observation[posAbove][1]) + gamma[posAbove[-1], posAbove[1]]
 
-        mle1 <- 1 / 2 * (logdetA + log((2 * pi)^(k-1)) + t(omega)  %*%  invCovMat  %*%  omega)  + log(obs[[j]][posAbove][1]) + sum(log(obs[[j]][posAbove]))
+        mle1 <- 1 / 2 * (logdetA + (k-1) * log(2 * pi) + t(omega)  %*%  invCovMat  %*%  omega)  + log(obs[[j]][posAbove][1]) + sum(log(obs[[j]][posAbove]))
       } else {
         #One exceedance only -> parameters have no impact
         mle1 <- 2 * log(obs[[j]][posAbove][1]) #not divided by u?
@@ -286,7 +286,7 @@ censoredLikelihoodBR <- function(obs,
 #' @rdname censoredLikelihoodBR
 censoredLikelihood <- function(obs, loc, vario, u, p = 499L, vec = NULL, nCores = 1L, cl = NULL){
   .Deprecated(new = "censoredLikelihood", package = "mvPot",
-              msg = "Please use the function `censoredLikelihoodBR` to estimate the censored likelihood of the Brown-Resnick processes.",
+              msg = "Please use the function `censoredLikelihoodBR` to estimate the censored likelihood of the Brown-Resnick process.",
               old = "censoredLikelihood")
   censoredLikelihoodBR(obs = obs, loc = loc, vario = vario, u = u, p = p, vec = vec, nCores= nCores, cl = cl)
 }
