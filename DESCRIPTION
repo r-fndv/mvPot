@@ -7,7 +7,7 @@ Authors@R: c(person(given="Raphael", family="de Fondeville", email = "raphael.de
              person(given="Leo", family="Belzile", role = "aut", email = "belzilel@gmail.com", comment = c(ORCID = "0000-0002-9135-014X")),
              person(given="Emeric", family="Thibaud", role = "ctb"))
 Description: Tools for high-dimensional peaks-over-threshold inference and simulation
-  of spatial extremal processes. Key references include de Fondeville and Davison (2018) <doi:10.1093/biomet/asy026>, Thibaud and Opitz (2015) <doi:10.1093/biomet/asv045>, Wadsworth and Tawn <doi:10.1093/biomet/ast042> as well as Genz and Bretz (2009) <doi:10.1007/978-3-642-01689-9>.
+  of spatial extremal processes. Key references include de Fondeville and Davison (2018) <doi:10.1093/biomet/asy026>, Thibaud and Opitz (2015) <doi:10.1093/biomet/asv045>, Wadsworth and Tawn <doi:10.1093/biomet/ast042>.
 License: GPL-2
 Imports:
     MASS,

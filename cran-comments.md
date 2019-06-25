@@ -1,19 +1,15 @@
-## Test environments
-* local OS X install, R 3.4.4
-* Debian 6.0.10, R 3.4.4
-* win-builder (devel and release)
-
-## R CMD check results
-
-0 errors | 0 warnings | 1 note
-
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Raphael de Fondeville <raphael.de-fondeville@epfl.ch>'
-
 Possibly mis-spelled words in DESCRIPTION:
-  extremal (10:14)
+  Bretz (11:240)
+  Davison (11:75)
+  Fondeville (11:60)
+  Genz (11:231)
+  Opitz (11:131)
+  Tawn (11:187)
+  Thibaud (11:119)
+  Wadsworth (11:173)
+  de (11:57)
 
 
-Explanation: This adjectif is commonly used in extreme value theory to describe any distribution/process/function with a heavy tail.
+Explanation: Family names of authors.
 
 ---
