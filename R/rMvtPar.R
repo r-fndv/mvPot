@@ -40,8 +40,8 @@ simulPareto <- function(n, loc, vario, nCores = 1, cl = NULL){
   if(!is.numeric(nCores) || nCores < 1) {
     stop('`nCores`` must a positive number of cores to use for parallel computing.')
   }
-  if(nCores > 1 && !inherits(clust, "cluster")) {
-    stop('For parallel computation, `cl`` must an cluster created by `makeCluster`` of the package `parallel`.')
+  if(nCores > 1 && !inherits(cl, "cluster")) {
+    stop('For parallel computation, `cl` must an cluster created by `makeCluster` of the package `parallel`.')
   }
 
   gamma <- tryCatch({
