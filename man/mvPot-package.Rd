@@ -51,7 +51,7 @@ Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabi
 Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }
 
-\keyword{ mvPot, multivariate, spatial }
+
 \examples{
 #Define semi-variogram function
 vario <- function(h, alpha = 1.5){
