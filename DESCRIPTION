@@ -14,6 +14,6 @@ Imports:
     evd,
     numbers,
     gmp
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Encoding: UTF-8
 URL: http://github.com/r-fndv/mvPot

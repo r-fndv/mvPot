@@ -4,8 +4,16 @@
 \alias{scoreEstimation}
 \title{Gradient score function for the Brown--Resnick model.}
 \usage{
-scoreEstimation(obs, loc, vario, weightFun = NULL, dWeightFun = NULL,
-  nCores = 1L, cl = NULL, ...)
+scoreEstimation(
+  obs,
+  loc,
+  vario,
+  weightFun = NULL,
+  dWeightFun = NULL,
+  nCores = 1L,
+  cl = NULL,
+  ...
+)
 }
 \arguments{
 \item{obs}{List of vectors exceeding an R-threshold, see de Fondeville and Davison (2018) for more details.}

@@ -4,8 +4,14 @@
 \alias{rExtremalStudentParetoProcess}
 \title{Simulation of extremal Student generalized Pareto vectors}
 \usage{
-rExtremalStudentParetoProcess(n, Sigma, nu, normalize = FALSE,
-  matchol = NULL, trunc = TRUE)
+rExtremalStudentParetoProcess(
+  n,
+  Sigma,
+  nu,
+  normalize = FALSE,
+  matchol = NULL,
+  trunc = TRUE
+)
 }
 \arguments{
 \item{n}{sample size}

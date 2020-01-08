@@ -5,9 +5,21 @@
 \alias{censoredLikelihoodXS}
 \title{Censored log-likelihood function of the extremal Student model}
 \usage{
-censoredLikelihoodXS(obs, loc, corrFun, nu, u, p = 499L, vec = NULL,
-  nCores = 1L, cl = NULL, likelihood = "mgp", ntot = NULL,
-  std = FALSE, ...)
+censoredLikelihoodXS(
+  obs,
+  loc,
+  corrFun,
+  nu,
+  u,
+  p = 499L,
+  vec = NULL,
+  nCores = 1L,
+  cl = NULL,
+  likelihood = "mgp",
+  ntot = NULL,
+  std = FALSE,
+  ...
+)
 }
 \arguments{
 \item{obs}{List of vectors for which at least one component exceeds a high threshold.}

@@ -5,11 +5,30 @@
 \alias{censoredLikelihood}
 \title{Censored log-likelihood function for the Brown--Resnick model.}
 \usage{
-censoredLikelihoodBR(obs, loc, vario, u, p = 499L, vec = NULL,
-  nCores = 1L, cl = NULL, likelihood = "mgp", ntot = NULL, ...)
+censoredLikelihoodBR(
+  obs,
+  loc,
+  vario,
+  u,
+  p = 499L,
+  vec = NULL,
+  nCores = 1L,
+  cl = NULL,
+  likelihood = "mgp",
+  ntot = NULL,
+  ...
+)
 
-censoredLikelihood(obs, loc, vario, u, p = 499L, vec = NULL,
-  nCores = 1L, cl = NULL)
+censoredLikelihood(
+  obs,
+  loc,
+  vario,
+  u,
+  p = 499L,
+  vec = NULL,
+  nCores = 1L,
+  cl = NULL
+)
 }
 \arguments{
 \item{obs}{List of vectors for which at least one component exceeds a high threshold.}
