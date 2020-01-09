@@ -10,7 +10,7 @@
 #' @note If \eqn{\nu>2}, an accept-reject algorithm using simulations from the angular measure on the
 #'  \eqn{l_1}{l1} is at least twice as efficient. The relative efficiency of the latter is much larger for larger \eqn{\nu}. 
 #'  This algorithm should therefore not be used in high dimensions as its acceptance rate
-#'  is severa orders of magnitude smaller than that implemented in \link[mev]{rparp}.
+#'  is several orders of magnitude smaller than that implemented in \link[mev]{rparp}.
 #' 
 #' 
 #' @param n sample size
