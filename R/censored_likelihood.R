@@ -206,10 +206,10 @@ censoredLikelihoodBR <- function(obs,
         logdetA = determinant(sigma[posAboveShifted, posAboveShifted, drop = FALSE], logarithm = TRUE)$modulus
         omega <- log(observation[posAbove][-1]/observation[posAbove][1]) + gamma[posAbove[-1], posAbove[1]]
 
-        mle1 <- 1 / 2 * (logdetA + (k-1) * log(2 * pi) + t(omega)  %*%  invCovMat  %*%  omega)  + log(obs[[j]][posAbove][1]) + sum(log(obs[[j]][posAbove]))
+        mle1 <- 1 / 2 * (logdetA + (k-1) * log(2 * pi) + t(omega)  %*%  invCovMat  %*%  omega)  + log(observation[posAbove][1]) + sum(log(observation[posAbove]))
       } else {
         #One exceedance only -> parameters have no impact
-        mle1 <- 2 * log(obs[[j]][posAbove][1]) #not divided by u?
+        mle1 <- 2 * log(observation[posAbove][1]) 
       }
 
       if(k < D){

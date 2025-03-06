@@ -10,7 +10,7 @@ The mvPot package provides functions to perform high-dimensional peaks-over-thre
 of spatial processes such as the Brown--Resnick. Parallel implementation for censored likelihood
 allows up to 500 locations, whereas the gradient score can handle thousands of locations. The package also
 includes simulations algorithms for the Brown-Resnick max-stable process as well as its associated Pareto process.
-A tutorial describing a complete case study of Red Sea temperature anomalies extremes can be found at \url{http://github.com/r-fndv/mvPot_tutorial}.
+A tutorial describing a complete case study of Red Sea temperature anomalies extremes can be found at \url{https://github.com/r-fndv/mvPot_tutorial}.
 }
 \details{
 

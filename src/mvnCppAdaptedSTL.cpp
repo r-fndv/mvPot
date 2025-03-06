@@ -1,8 +1,8 @@
 #include <R.h>
+#include <vector>
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 #include <Rmath.h>
-#include <vector>
 #include <limits>
 
 
