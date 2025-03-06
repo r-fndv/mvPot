@@ -79,7 +79,7 @@ void pointEstimate(int j,
                    double *est)
 {   double value = 0;
     double* x;
-    x = (double*) Calloc(*d, double);
+    x = (double*) calloc(*d, double);
 
     for (int k = 0; k < *d; k++) {
         x[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -87,9 +87,9 @@ void pointEstimate(int j,
     }
 
     double* e;
-    e = (double*) Calloc(*d, double);
+    e = (double*) calloc(*d, double);
     double* y;
-    y = (double*) Calloc(*d, double);
+    y = (double*) calloc(*d, double);
 
     //e[0] = 0.5 + 0.5 * erf_R((b)[0] / ((L)[0]*sqrt(2.0)));
     e[0] = pnorm(((b)[0] / (L)[0]), 0, 1, 1, 0);
@@ -121,9 +121,9 @@ void pointEstimate(int j,
         }
     *est += value;
 
-    Free(x);
-    Free(e);
-    Free(y);
+    free(x);
+    free(e);
+    free(y);
 }
 
 
@@ -138,9 +138,9 @@ void pointEstimateAT(int j,
   double value1 = 0;
   double value2 = 0;
   double* x1;
-  x1 = (double*) Calloc(*d, double);
+  x1 = (double*) calloc(*d, double);
   double* x2;
-  x2 = (double*) Calloc(*d, double);
+  x2 = (double*) calloc(*d, double);
   
   for (int k = 0; k < *d; k++) {
     x1[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -148,14 +148,14 @@ void pointEstimateAT(int j,
   }
   
   double* e1;
-  e1 = (double*) Calloc(*d, double);
+  e1 = (double*) calloc(*d, double);
   double* y1;
-  y1 = (double*) Calloc(*d, double);
+  y1 = (double*) calloc(*d, double);
   
   double* e2;
-  e2 = (double*) Calloc(*d, double);
+  e2 = (double*) calloc(*d, double);
   double* y2;
-  y2 = (double*) Calloc(*d, double);
+  y2 = (double*) calloc(*d, double);
   
   //e[0] = 0.5 + 0.5 * erf_R((b)[0] / ((L)[0]*sqrt(2.0)));
   e1[0] = pnorm(((b)[0] / (L)[0]), 0, 1, 1, 0);
@@ -201,12 +201,12 @@ void pointEstimateAT(int j,
   *est += value1;
   *est += value2;
   
-  Free(x1);
-  Free(e1);
-  Free(y1);
-  Free(x2);
-  Free(e2);
-  Free(y2);
+  free(x1);
+  free(e1);
+  free(y1);
+  free(x2);
+  free(e2);
+  free(y2);
 }
 
 extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp_b, double *tmp_generatingVector, 
@@ -386,7 +386,7 @@ void pointEstimateTProb(int j,
                         double *nu)
 {   double value = 0;
     double* x;
-    x = (double*) Calloc(*d, double);
+    x = (double*) calloc(*d, double);
     
     for (int k = 0; k < *d; k++) {
         x[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -394,11 +394,11 @@ void pointEstimateTProb(int j,
     }
     
     double* e;
-    e = (double*) Calloc(*d, double);
+    e = (double*) calloc(*d, double);
     double* y;
-    y = (double*) Calloc(*d, double);
+    y = (double*) calloc(*d, double);
     double* b;
-    b = (double*) Calloc(*d, double);
+    b = (double*) calloc(*d, double);
     
     double scaling = 0;
     scaling = sqrt(2 * qgamma(x[*d - 1], *nu / 2, 1, 1, 0));
@@ -439,10 +439,10 @@ void pointEstimateTProb(int j,
     }
     *est += value;
     
-    Free(x);
-    Free(e);
-    Free(y);
-    Free(b);
+    free(x);
+    free(e);
+    free(y);
+    free(b);
 }
 
 void pointEstimateTProbAT(int j,
@@ -458,8 +458,8 @@ void pointEstimateTProbAT(int j,
   double value2 = 0;
   double* x1;
   double* x2;
-  x1 = (double*) Calloc(*d, double);
-  x2 = (double*) Calloc(*d, double);
+  x1 = (double*) calloc(*d, double);
+  x2 = (double*) calloc(*d, double);
   
   for (int k = 0; k < *d; k++) {
     x1[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -467,17 +467,17 @@ void pointEstimateTProbAT(int j,
   }
   
   double* e1;
-  e1 = (double*) Calloc(*d, double);
+  e1 = (double*) calloc(*d, double);
   double* y1;
-  y1 = (double*) Calloc(*d, double);
+  y1 = (double*) calloc(*d, double);
   double* b1;
-  b1 = (double*) Calloc(*d, double);
+  b1 = (double*) calloc(*d, double);
   double* e2;
-  e2 = (double*) Calloc(*d, double);
+  e2 = (double*) calloc(*d, double);
   double* y2;
-  y2 = (double*) Calloc(*d, double);
+  y2 = (double*) calloc(*d, double);
   double* b2;
-  b2 = (double*) Calloc(*d, double);
+  b2 = (double*) calloc(*d, double);
   double scaling1 = 0;
   double scaling2 = 0;
   
@@ -537,14 +537,14 @@ void pointEstimateTProbAT(int j,
   *est += value1;
   *est += value2;
   
-  Free(x1);
-  Free(e1);
-  Free(y1);
-  Free(b1);
-  Free(x2);
-  Free(e2);
-  Free(y2);
-  Free(b2);
+  free(x1);
+  free(e1);
+  free(y1);
+  free(b1);
+  free(x2);
+  free(e2);
+  free(y2);
+  free(b2);
 }
 
 extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d,  double *tmp_mat, double *tmp_b, double *nu, 
