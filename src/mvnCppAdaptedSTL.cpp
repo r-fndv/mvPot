@@ -79,7 +79,7 @@ void pointEstimate(int j,
                    double *est)
 {   double value = 0;
     double* x;
-    x = (double*) calloc(*d, double);
+    x = (double*) calloc(*d, sizeof(double));
 
     for (int k = 0; k < *d; k++) {
         x[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -87,9 +87,9 @@ void pointEstimate(int j,
     }
 
     double* e;
-    e = (double*) calloc(*d, double);
+    e = (double*) calloc(*d, sizeof(double));
     double* y;
-    y = (double*) calloc(*d, double);
+    y = (double*) calloc(*d, sizeof(double));
 
     //e[0] = 0.5 + 0.5 * erf_R((b)[0] / ((L)[0]*sqrt(2.0)));
     e[0] = pnorm(((b)[0] / (L)[0]), 0, 1, 1, 0);
@@ -138,9 +138,9 @@ void pointEstimateAT(int j,
   double value1 = 0;
   double value2 = 0;
   double* x1;
-  x1 = (double*) calloc(*d, double);
+  x1 = (double*) calloc(*d, sizeof(double));
   double* x2;
-  x2 = (double*) calloc(*d, double);
+  x2 = (double*) calloc(*d, sizeof(double));
   
   for (int k = 0; k < *d; k++) {
     x1[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -148,14 +148,14 @@ void pointEstimateAT(int j,
   }
   
   double* e1;
-  e1 = (double*) calloc(*d, double);
+  e1 = (double*) calloc(*d, sizeof(double));
   double* y1;
-  y1 = (double*) calloc(*d, double);
+  y1 = (double*) calloc(*d, sizeof(double));
   
   double* e2;
-  e2 = (double*) calloc(*d, double);
+  e2 = (double*) calloc(*d, sizeof(double));
   double* y2;
-  y2 = (double*) calloc(*d, double);
+  y2 = (double*) calloc(*d, sizeof(double));
   
   //e[0] = 0.5 + 0.5 * erf_R((b)[0] / ((L)[0]*sqrt(2.0)));
   e1[0] = pnorm(((b)[0] / (L)[0]), 0, 1, 1, 0);
@@ -243,7 +243,7 @@ extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
     std::vector< double > y(*tmp_d);
     std::vector< std::vector<double> > L(*tmp_d, std::vector<double>(*tmp_d));
     int pos = 0;
-    double min = LONG_MAX;
+    double min = DBL_MAX;
 
     //PARAMETERS FOR INTEGRATION
     // int nRep = 10;
@@ -281,7 +281,7 @@ extern "C" void mvtNormCpp(int *tmp_xn, int *tmp_d, double *tmp_mat, double *tmp
 
     //ITERATE THE PROCESS
     for (int rec = 1; rec < *tmp_d; rec ++){
-        min = LONG_MAX;
+        min = DBL_MAX;
         pos = rec;
         //------------------COMPUTE CANDIDATE FOR NEW UPPER BOUND
         std::vector< double > b_New_Temp(*tmp_d - rec);
@@ -386,7 +386,7 @@ void pointEstimateTProb(int j,
                         double *nu)
 {   double value = 0;
     double* x;
-    x = (double*) calloc(*d, double);
+    x = (double*) calloc(*d, sizeof(double));
     
     for (int k = 0; k < *d; k++) {
         x[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -394,11 +394,11 @@ void pointEstimateTProb(int j,
     }
     
     double* e;
-    e = (double*) calloc(*d, double);
+    e = (double*) calloc(*d, sizeof(double));
     double* y;
-    y = (double*) calloc(*d, double);
+    y = (double*) calloc(*d, sizeof(double));
     double* b;
-    b = (double*) calloc(*d, double);
+    b = (double*) calloc(*d, sizeof(double));
     
     double scaling = 0;
     scaling = sqrt(2 * qgamma(x[*d - 1], *nu / 2, 1, 1, 0));
@@ -458,8 +458,8 @@ void pointEstimateTProbAT(int j,
   double value2 = 0;
   double* x1;
   double* x2;
-  x1 = (double*) calloc(*d, double);
-  x2 = (double*) calloc(*d, double);
+  x1 = (double*) calloc(*d, sizeof(double));
+  x2 = (double*) calloc(*d, sizeof(double));
   
   for (int k = 0; k < *d; k++) {
     x1[k] = std::abs(2 * ((generatingVector[k] * j +  randomShift[k])  - floor(generatingVector[k] * j +  randomShift[k])) - 1);
@@ -467,17 +467,17 @@ void pointEstimateTProbAT(int j,
   }
   
   double* e1;
-  e1 = (double*) calloc(*d, double);
+  e1 = (double*) calloc(*d, sizeof(double));
   double* y1;
-  y1 = (double*) calloc(*d, double);
+  y1 = (double*) calloc(*d, sizeof(double));
   double* b1;
-  b1 = (double*) calloc(*d, double);
+  b1 = (double*) calloc(*d, sizeof(double));
   double* e2;
-  e2 = (double*) calloc(*d, double);
+  e2 = (double*) calloc(*d, sizeof(double));
   double* y2;
-  y2 = (double*) calloc(*d, double);
+  y2 = (double*) calloc(*d, sizeof(double));
   double* b2;
-  b2 = (double*) calloc(*d, double);
+  b2 = (double*) calloc(*d, sizeof(double));
   double scaling1 = 0;
   double scaling2 = 0;
   
@@ -581,7 +581,7 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d,  double *tmp_mat, double *tm
     std::vector< double > y(*tmp_d);
     std::vector< std::vector<double> > L(*tmp_d, std::vector<double>(*tmp_d));
     int pos = 0;
-    double min = LONG_MAX;
+    double min = DBL_MAX;
 
     //PARAMETERS FOR INTEGRATION
     double diff = 0, p = 0, error = 0;
@@ -618,7 +618,7 @@ extern "C" void mvTProbCpp(int *tmp_xn, int *tmp_d,  double *tmp_mat, double *tm
 
     //ITERATE THE PROCESS
     for (int rec = 1; rec < *tmp_d; rec ++){
-        min = LONG_MAX;
+        min = DBL_MAX;
         pos = rec;
         //------------------COMPUTE CANDIDATE FOR NEW UPPER BOUND
         std::vector< double > b_New_Temp(*tmp_d - rec);

@@ -49,7 +49,7 @@ Dombry, C., Engelke, S. and Oesting, M. (2016). Exact simulation of max-stable p
 
 Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
 
-Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
+
 }
 
 

@@ -13,7 +13,7 @@
 #' that the matrix is positive semi-definite.
 #' @param ... Additional arguments passed to Cpp routine.
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
-#' @references Genz, A. (2013). QSILATMVNV \url{https://www.math.wsu.edu/faculty/genz/software/software.html}
+#' @source Adapted from the \code{QSILATMVNV} by A. Genz (2013)
 #' @param genVec Generating vector for the quasi-Monte Carlo procedure. Can be computed using \code{genVecQMC}.
 #' @return A named vector with components estimate \code{estimate} of the distribution function 
 #' along \code{error}, 3 times the empirical Monte Carlo standard error over the \code{nrep} replications.

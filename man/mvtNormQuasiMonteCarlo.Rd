@@ -3,6 +3,9 @@
 \name{mvtNormQuasiMonteCarlo}
 \alias{mvtNormQuasiMonteCarlo}
 \title{Multivariate normal distribution function}
+\source{
+Adapted from the \code{QSILATMVNV} by A. Genz (2013)
+}
 \usage{
 mvtNormQuasiMonteCarlo(p, upperBound, cov, genVec, ...)
 }
@@ -58,6 +61,4 @@ mvtNormQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, latticeRule$genVec)
 }
 \references{
 Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
-
-Genz, A. (2013). QSILATMVNV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }

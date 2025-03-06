@@ -49,7 +49,7 @@
 #' @importFrom stats pt
 #' @useDynLib mvPot mvTProbCpp
 #' @references Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
-#' @references Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
+#' @source Adapted from the \code{QSILATMVTV} Matlab routine by A. Genz (2013)
 mvTProbQuasiMonteCarlo <- function(p, upperBound, cov, nu, genVec, ...){
   if(length(cov) == 1L){
     if(length(upperBound) != length(cov)){

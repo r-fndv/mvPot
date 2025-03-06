@@ -3,6 +3,9 @@
 \name{mvTProbQuasiMonteCarlo}
 \alias{mvTProbQuasiMonteCarlo}
 \title{Multivariate t distribution function}
+\source{
+Adapted from the \code{QSILATMVTV} Matlab routine by A. Genz (2013)
+}
 \usage{
 mvTProbQuasiMonteCarlo(p, upperBound, cov, nu, genVec, ...)
 }
@@ -64,8 +67,6 @@ mvTProbQuasiMonteCarlo(latticeRule$primeP, upperBound, cov, nu, latticeRule$genV
 }
 \references{
 Genz, A. and Bretz, F. (2009). Computations of Multivariate Normal and t Probabilities, volume 105. Springer: Dordrecht.
-
-Genz, A. (2013). QSILATMVTV \url{http://www.math.wsu.edu/faculty/genz/software/software.html}
 }
 \author{
 Raphael de Fondeville
