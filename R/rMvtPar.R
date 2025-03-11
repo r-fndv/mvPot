@@ -1,4 +1,4 @@
-#' Simulate Pareto random vectors
+#' Simulate log-Gaussian Pareto random vectors
 #'
 #' \code{simulPareto} provides \code{n} replicates of the multivariate Pareto distribution
 #' associated to log-Gaussian random function with semi-variogram \code{vario}.

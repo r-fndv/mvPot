@@ -2,7 +2,7 @@
 % Please edit documentation in R/rMvtPar.R
 \name{simulPareto}
 \alias{simulPareto}
-\title{Simulate Pareto random vectors}
+\title{Simulate log-Gaussian Pareto random vectors}
 \usage{
 simulPareto(n, loc, vario, nCores = 1, cl = NULL)
 }

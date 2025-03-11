@@ -1,4 +1,4 @@
-#' Simulation of Brown--Resnick random vectors
+#' Simulation of Brown--Resnick max-stable random vectors
 #'
 #' \code{simulBrownResnick} provides \code{n} replicates of a Brown--Resnick max-stable process with semi-variogram \code{vario}
 #' at locations \code{loc}.
@@ -30,8 +30,6 @@
 #' #Simulate data
 #' obs <- simulBrownResnick(10, loc, vario)
 #' @export
-
-
 simulBrownResnick <- function(n, loc, vario, nCores = 1, cl = NULL){
 
   if(!inherits(loc, "data.frame")) {
@@ -67,7 +65,7 @@ simulBrownResnick <- function(n, loc, vario, nCores = 1, cl = NULL){
   })
 
   simFun <- function(i) {
-    print(i)
+#     print(i)
     poisson <- stats::rexp(1)
     brownResnick <- 1/poisson * paretoBR(1, dim, gamma)
 

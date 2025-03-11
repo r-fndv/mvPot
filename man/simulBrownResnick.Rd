@@ -2,7 +2,7 @@
 % Please edit documentation in R/rBrownResnick.R
 \name{simulBrownResnick}
 \alias{simulBrownResnick}
-\title{Simulation of Brown--Resnick random vectors}
+\title{Simulation of Brown--Resnick max-stable random vectors}
 \usage{
 simulBrownResnick(n, loc, vario, nCores = 1, cl = NULL)
 }

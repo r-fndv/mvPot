@@ -1,8 +1,12 @@
 # mvPot 0.1.7
-* Fix hyperlink in documentation.
+
+* Removed broken hyperlinks in documentation.
+* Change of maintainer, implementation of new CRAN checks (longer description, no printing)
+* Fixes to C++ code for STRICT checks.
 
 
 # mvPot 0.1.6
+
 * Fix an compilation issue on Fedora.
 
 # mvPot 0.1.5
